@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {
-  AppBar, Typography, Avatar, MenuItem, Menu, Fade, Box,
+  AppBar, Typography, Avatar, MenuItem, Menu, Fade, Box, Select,
 } from '@mui/material'
 import {
   Search, StyledToolbar, Icons, UserBox, SearchIconWrapper,
@@ -15,7 +15,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import InterestsIcon from '@mui/icons-material/Interests';
 import MoreIcon from '@mui/icons-material/MoreVert';
 
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import MobileMenu from './MobileMenu';
 import NavIcon from './NavIcon';
@@ -33,8 +33,12 @@ const Navbar = () => {
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position='static'  >
+    <Box sx={{ flexGrow: 1 }}    >
+      <AppBar
+        //  position='static'
+        sx={{ position: 'fixed', right: 0, top: 0, left: 0 }} className="mui-fixed"
+
+      >
 
         <StyledToolbar>
 
@@ -78,7 +82,9 @@ const Navbar = () => {
           </UserBox>
         </StyledToolbar>
 
+
         <Menu
+          // disableScrollLock={true}
           id="fade-menu"
           MenuListProps={{
             'aria-labelledby': 'fade-button',

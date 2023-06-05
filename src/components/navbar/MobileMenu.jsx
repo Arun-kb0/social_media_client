@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
     AppBar, Typography, Badge, Avatar, MenuItem, Menu, Fade, Box,
-    IconButton, Toolbar,
+    IconButton, Toolbar, Select,
 } from '@mui/material'
 import propic from '../../images/propic.jpg'
 
@@ -20,9 +20,11 @@ const MobileMenu = ({ openMobileMenu, setOpenMobileMenu }) => {
         setUserMenuOpen(prev => !prev)
     }
 
-    
+
     return (
+      
         <Menu
+            // disableScrollLock={true}
             // anchorEl={mobileMoreAnchorEl}
             sx={{ marginTop: '30px' }}
             anchorOrigin={{
@@ -53,10 +55,10 @@ const MobileMenu = ({ openMobileMenu, setOpenMobileMenu }) => {
                 <p>Profile</p>
             </MenuItem>
 
-                <MobileUserMenu
-                    setUserMenuOpen={setUserMenuOpen}
-                    userMenuOpen={userMenuOpen}
-                />
+            <MobileUserMenu
+                setUserMenuOpen={setUserMenuOpen}
+                userMenuOpen={userMenuOpen}
+            />
         </Menu>
     )
 }
@@ -67,6 +69,7 @@ const MobileUserMenu = ({ setUserMenuOpen, userMenuOpen }) => {
     }
     return (
         <Menu
+            disableScrollLock={true}
             // anchorEl={anchorEl}
             sx={{ marginTop: '230px' }}
             anchorOrigin={{

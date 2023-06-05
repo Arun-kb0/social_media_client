@@ -1,5 +1,5 @@
 import React from 'react'
-import { Stack, Fab, Tooltip } from '@mui/material'
+import { Stack, Fab, Tooltip, Container, Box } from '@mui/material'
 import LeftSidebar from '../leftSidebar/LeftSidebar'
 import RightSidebar from '../rightSidebar/RightSidebar'
 import Posts from '../posts/posts'
@@ -10,12 +10,15 @@ import AddIcon from '@mui/icons-material/Add';
 const Home = () => {
 
     return (
-        <div>
+        <Box
+            sx={{ position: 'fixed', right: 0, top: 65, left: 0 }}
+            className="mui-fixed"
+        >
             <Stack
                 direction='row'
                 spacing={2}
                 justifyContent='space-between'
-                sx={{ overflowY: 'scroll', maxHeight: '100vh' }}
+                sx={{ overflowY: 'scroll', maxHeight: '100vh', }}
             >
                 <LeftSidebar />
                 <Drawer />
@@ -35,7 +38,7 @@ const Home = () => {
                     </Fab>
                 </Tooltip>
             </Stack>
-        </div>
+        </Box>
     )
 }
 

@@ -12,7 +12,7 @@ const Drawer = () => {
 
     return (
         <SwipeableDrawer
-            disableScrollLock={true}
+            // disableScrollLock={true} //remove body right sidespace 
             sx={{ display: { xs: 'flex', sm: 'none' } }}
             // anchor={anchor}
             open={open}

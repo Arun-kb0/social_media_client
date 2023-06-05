@@ -17,7 +17,6 @@ const App = () => {
           <Route path='/' element={<Home />} />
           <Route path='/create' element={<CreatePost />} />
           <Route path='/auth' element={<Auth />} />
-
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

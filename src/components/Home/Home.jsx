@@ -5,7 +5,7 @@ import RightSidebar from '../rightSidebar/RightSidebar'
 import Posts from '../posts/posts'
 import Drawer from '../leftSidebar/Drawer'
 import AddIcon from '@mui/icons-material/Add';
-
+import { grey } from '@mui/material/colors'
 
 const Home = () => {
 
@@ -18,7 +18,9 @@ const Home = () => {
                 direction='row'
                 spacing={2}
                 justifyContent='space-between'
+                bgcolor={grey[300]}
                 sx={{ overflowY: 'scroll', maxHeight: '100vh', }}
+
             >
                 <LeftSidebar />
                 <Drawer />

@@ -13,7 +13,6 @@ import propic from '../../images/propic.jpg'
 const RightSidebar = () => {
   return (
     <Box
-      // bgcolor={grey[200]}
       borderRadius={1}
 
       flex={2} p={1} pr={0}
@@ -45,7 +44,7 @@ const RightSidebar = () => {
           </StyledTypography>
 
         <Box sx={{display:'flex' , justifyContent:'center' }}>
-          <List sx={{ width: '100%', maxWidth: 400, bgcolor: 'background.paper' }}  >
+          <List sx={{ width: '100%', maxWidth: 400, bgcolor: grey[100] }}  >
             <ListItem  >
               <ListItemAvatar><Avatar src={propic} alt={"name"} /> </ListItemAvatar>
               <ListItemText

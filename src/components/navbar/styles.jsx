@@ -1,4 +1,5 @@
 import { Toolbar, Box, InputBase, IconButton } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import { styled, alpha } from '@mui/material/styles';
 
 
@@ -12,15 +13,18 @@ export const Search = styled(Box)(({ theme }) => ({
     marginRight: theme.spacing(2),
     marginLeft: 0,
     width: '100%',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    borderRadius: '30px',
+    // backgroundColor: alpha(theme.palette.common.white, 0.15),
+    backgroundColor: grey[300],
+    color:grey[700],
     '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
+        backgroundColor: alpha(grey[300], 0.50),
     },
     [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(3),
+        marginRight: theme.spacing(3),
         width: 'auto',
     },
+   
 }))
 
 export const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -52,7 +56,7 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export const StyledIconButton = styled(IconButton)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
-    color: 'inherit',
+    color: grey[700],
     '&:focus': { outline: 'none' },
 }))
 

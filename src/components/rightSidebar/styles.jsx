@@ -7,7 +7,7 @@ export const StyledInnerBox = styled(Box)(({theme})=> ({
     position: 'fixed',
     width: '25ch',
     justifyContent: 'center',
-    backgroundColor: grey[200],
+    backgroundColor: 'white',
     height: '100vh',
     [theme.breakpoints.only('md')]: {
         width: '30ch',

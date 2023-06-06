@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import {
-  AppBar, Typography, Avatar, MenuItem, Menu, Fade, Box, Select,
+  AppBar, Typography, Avatar, MenuItem, Menu, Fade, Box, Button,
 } from '@mui/material'
 import {
   Search, StyledToolbar, Icons, UserBox, SearchIconWrapper,
   StyledInputBase, StyledIconButton
 } from './styles';
+import { blueGrey } from '@mui/material/colors';
 
 import propic from '../../images/propic.jpg'
 import SearchIcon from '@mui/icons-material/Search';
@@ -36,27 +37,34 @@ const Navbar = () => {
     <Box sx={{ flexGrow: 1 }}    >
       <AppBar
         //  position='static'
-        sx={{ position: 'fixed', right: 0, top: 0, left: 0 }} className="mui-fixed"
-
+        sx={{ position: 'fixed', right: 0, top: 0, left: 0, backgroundColor:'white' }}
+        className="mui-fixed"
       >
 
         <StyledToolbar>
-
           <UserBox>
             <StyledIconButton onClick={handleDrawer}>
               <MenuIcon />
             </StyledIconButton>
           </UserBox>
 
-          <Typography
-            variant='h6'
-            noWrap
-            component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+          <Button
+            variant='text'
+            LinkComponent={Link}
+            to='/'
+            sx={{ padding: '0px' }}
           >
-            Social Media
-          </Typography>
-          <InterestsIcon sx={{ display: { xs: 'block', sm: 'none' }, padding: '15px' }} />
+            <Typography
+              variant='h6'
+              color={blueGrey[700]}
+              // noWrap
+              // component="div"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+            >
+              Social Media
+            </Typography>
+            <InterestsIcon sx={{ display: { xs: 'block', sm: 'none' }, padding: '15px', color: blueGrey[50] }} />
+          </Button>
 
           <Search>
             <SearchIconWrapper>

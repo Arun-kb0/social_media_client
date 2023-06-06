@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 export const StyledInnerBox = styled(Box)(({ theme }) => ({
     position: 'fixed',
     justifyContent: 'center',
-    backgroundColor: grey[200],
+    backgroundColor: 'white',
     height: '100vh',
     [theme.breakpoints.only("sm")]: {
         width: '15ch'

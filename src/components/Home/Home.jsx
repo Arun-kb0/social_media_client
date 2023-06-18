@@ -6,8 +6,10 @@ import Posts from '../posts/posts'
 import Drawer from '../leftSidebar/Drawer'
 import AddIcon from '@mui/icons-material/Add';
 import { grey } from '@mui/material/colors'
+import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
+    const navigate = useNavigate()
 
     return (
         <Box
@@ -25,15 +27,18 @@ const Home = () => {
                 <LeftSidebar />
                 <Drawer />
                 <Posts />
-
                 <RightSidebar />
+
+
                 <Tooltip
-                    title="add"
+                    title="add post"
+                    popper
                     sx={{
-                        position: 'fixed', bottom: 20,
+                        position: 'fixed',
+                        bottom: 20,
                         left: { xs: 'calc(50% - 12px)', md: '30px' },
                     }}
-                    onClick={() => { }}
+                    onClick={() => { navigate('/create') }}
                 >
                     <Fab color="primary" aria-label="add">
                         <AddIcon />

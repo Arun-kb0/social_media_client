@@ -1,21 +1,25 @@
 import React from 'react'
-import { Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, Checkbox,  IconButton } from '@mui/material'
+import { Avatar, Card, CardActions, CardContent, CardHeader, CardMedia, Checkbox, IconButton, Typography } from '@mui/material'
 import { grey, red } from '@mui/material/colors'
+import moment from 'moment'
 
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-import paella from '../../../images/paella.jpg'
+import { StyledCard } from '../styles';
 
-const Post = () => {
+const Post = ({ post }) => {
   return (
-    <Card elevation={4} sx={{marginBottom:5}} bgColor={grey[500]}>
+    <StyledCard
+      bgColor={grey[500]}
+      raised={true}
+    >
       <CardHeader
         avatar={
-          <Avatar sx={{ bgColor: red[500] }} aria-label="post">
-            J
+          <Avatar sx={{ backgroundColor: red[500] }} aria-label="post">
+            {post?.creator?.charAt(0)}
           </Avatar>
         }
         action={
@@ -23,31 +27,38 @@ const Post = () => {
             <MoreVertIcon />
           </IconButton>
         }
-        title='john Doe'
-        subheader={'september 14 2010'}
+        title={post?.title}
+        subheader={moment(post?.createdAt).fromNow()}
       />
 
       <CardMedia
         component='img'
         height='20%'
-        image={paella}
+        image={post.selectedFile}
+        sx={{height:{md:'30%'}}}
         alt='post image'
       />
 
       <CardContent>
-        <CardActions >
-          <IconButton >
-            <Checkbox
-              icon={<FavoriteBorder />}
-              checkedIcon={<Favorite sx={{ color: red[500] }} />}
-            />
-          </IconButton>
-          <IconButton>
-            <ShareIcon />
-          </IconButton>
-        </CardActions>
+        <Typography variant='p' component='p'>{post?.message}</Typography>
+        <Typography variant='p' component='p'>{ }</Typography>
+        {post.tags?.map(tag => (
+          <Typography variant="p" color={grey[600]} >{`#${tag} `}</Typography>
+        ))}
       </CardContent>
-    </Card>
+
+      <CardActions >
+        <IconButton >
+          <Checkbox
+            icon={<FavoriteBorder />}
+            checkedIcon={<Favorite sx={{ color: red[500] }} />}
+          />
+        </IconButton>
+        <IconButton>
+          <ShareIcon />
+        </IconButton>
+      </CardActions>
+    </StyledCard>
   )
 }
 

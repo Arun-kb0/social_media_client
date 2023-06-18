@@ -76,7 +76,8 @@ export const StyledTextFiels = styled(Box)(({ theme }) => ({
         paddingRight: 1,
     },
     [theme.breakpoints.only('xs')]: {
-        width: "100%"
+        width: "100%",
+        paddingLeft:30
 
     },
 

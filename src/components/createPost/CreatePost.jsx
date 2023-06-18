@@ -12,22 +12,28 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import CloseIcon from '@mui/icons-material/Close';
 
 import EmojiPicker from "emoji-picker-react";
-
+import {useDispatch,useSelector} from 'react-redux'
+import { createPost } from '../../redux/features/post/postActions';
 
 const CreatePost = () => {
   const initialState = {
     title: "",
-    discription: "",
+    message: "",
     tags: '',
-    selectedFile: ""
+    selectedFile: "",
+    creator:'arun'
   }
   const [formData, setformData] = useState(initialState)
   const [pickerOpen, setPickerOpen] = useState({ isopen: false, name: '' })
   const [clear, setClear] = useState(false)
+  
+  const dispatch = useDispatch()
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log(formData)
+    // console.log(formData)
+    dispatch(createPost(formData))
+    handleClear()
   }
 
   const handleChange = (e) => {
@@ -88,16 +94,16 @@ const CreatePost = () => {
 
             <Box>
               <TextField
-                label='Discription'
-                name="discription"
+                label='Message'
+                name="message"
                 variant='standard'
-                value={formData.discription}
+                value={formData.message}
                 multiline
                 rows={4}
                 sx={{ paddingBottom: 3, width: '80%' }}
                 onChange={handleChange}
               />
-              <IconButton onClick={() => setPickerOpen({ isopen: !pickerOpen.isopen, name: 'discription' })}>
+              <IconButton onClick={() => setPickerOpen({ isopen: !pickerOpen.isopen, name: 'message' })}>
                 <EmojiEmotionsIcon color='secondary' />
               </IconButton>
             </Box>

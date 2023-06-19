@@ -108,7 +108,7 @@ const Auth = () => {
 
 
   return (
-    <StyledBox sx={{}}>
+    <StyledBox >
 
       <Container component={'div'} maxWidth='xs'>
         <StyledPaper elevation={4} >
@@ -118,7 +118,7 @@ const Auth = () => {
           </Typography>
 
           <StyledForm onSubmit={handleSubmit} >
-            <Box container spacing={2} mb={2} >
+            <Box  spacing={2} mb={2} >
               {isSignUp && (
                 <Box display={'flex'} gap={1} mb={1}>
                   <TextField

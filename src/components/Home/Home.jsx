@@ -32,7 +32,7 @@ const Home = () => {
 
                 <Tooltip
                     title="add post"
-                    popper
+                    // popper
                     sx={{
                         position: 'fixed',
                         bottom: 20,

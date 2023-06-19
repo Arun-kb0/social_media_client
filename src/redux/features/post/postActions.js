@@ -2,13 +2,14 @@ import {
     CREATE_POST,GET_POST
 } from "../../../constants/actionTypes";
 import * as api from '../../../api/apiIndex'
+import axios from "axios";
 
 
 
-export const getPosts = ()=> async (dispatch)=>{
+export const getPosts = (page)=> async (dispatch)=>{
     try {
-        const { data } = await api.getPosts() 
-        console.log('getPosts success')
+        const source = axios.CancelToken.source()
+        const { data } = await api.getPosts(page,source) 
         dispatch({type:GET_POST , payload:data})
     } catch (error) {
         console.log(error)

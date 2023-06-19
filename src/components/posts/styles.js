@@ -20,6 +20,7 @@ export const StyledPostsBox = styled(Box)(({ theme }) => ({
 
 
 export const StyledCard = styled(Card)(({ theme }) => ({
+    position:'relative',
     marginBottom: 20,
     [theme.breakpoints.up('lg')]: {
         height: 'auto',

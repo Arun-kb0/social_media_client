@@ -21,7 +21,7 @@ const Home = () => {
                 spacing={2}
                 justifyContent='space-between'
                 bgcolor={grey[300]}
-                sx={{ overflowY: 'scroll', maxHeight: '100vh', }}
+                sx={{ overflowY: 'scroll', maxHeight: '100vh', height:'100vh' }}
 
             >
                 <LeftSidebar />

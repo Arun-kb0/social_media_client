@@ -38,7 +38,7 @@ const Navbar = () => {
       <AppBar
         //  position='static'
         sx={{ position: 'fixed', right: 0, top: 0, left: 0, backgroundColor:'white' }}
-        className="mui-fixed"
+        sName="mui-fixed"
       >
 
         <StyledToolbar>

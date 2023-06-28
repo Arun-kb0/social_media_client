@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, IconButton, TextField, Typography,Fab } from '@mui/material'
+import { Box, Button, IconButton, TextField, Typography, Fab } from '@mui/material'
+import {LoadingButton} from '@mui/lab'
 import { grey, red } from '@mui/material/colors'
 import {
   StyledBox, StyledContainer, StyledDragAndDrop, StyledCreateButton,
   StyledTextFiels, StyledForm, StyledDragAndDropContainer,
-  EmojiPickerContainer,StyledImage
+  EmojiPickerContainer, StyledImage
 } from './Styles'
 
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -12,27 +13,53 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import CloseIcon from '@mui/icons-material/Close';
 
 import EmojiPicker from "emoji-picker-react";
-import {useDispatch,useSelector} from 'react-redux'
-import { createPost } from '../../redux/features/post/postActions';
+import { useDispatch, useSelector } from 'react-redux'
+import { createPost, editPost } from '../../redux/features/post/postActions';
 
-const CreatePost = () => {
+import { useLocation } from 'react-router-dom';
+import Notification from '../notification/Notification';
+
+const CreatePost = (props) => {
+  const { postToEdit, edit } = props
   const initialState = {
     title: "",
     message: "",
     tags: '',
     selectedFile: "",
-    creator:'arun'
+    creator_id: '',
+    creator_name: '',
   }
   const [formData, setformData] = useState(initialState)
   const [pickerOpen, setPickerOpen] = useState({ isopen: false, name: '' })
   const [clear, setClear] = useState(false)
-  
+  const [isEdit, setIsEdit] = useState(edit)
+
   const dispatch = useDispatch()
+  const localtion = useLocation()
+  // const postToEdit = localtion.state?.post
+
+  const { authData } = useSelector(state => state.auth)
+  const { message, isMessage, loading } = useSelector(state => state.post)
+
+
+  useEffect(() => {
+    console.log("postToEdit useEffect")
+    // console.log(postToEdit, isEdit)
+    isEdit
+      ? setformData(postToEdit)
+      : setformData(initialState)
+  }, [])
+
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // console.log(formData)
-    dispatch(createPost(formData))
+    if (isEdit) {
+      dispatch(editPost(formData))
+      setIsEdit(false)
+    } else {
+      const username = authData?.result?.name
+      dispatch(createPost({ ...formData, creator_name: username }))
+    }
     handleClear()
   }
 
@@ -44,8 +71,8 @@ const CreatePost = () => {
   }
 
   const handleEmoji = (emoji) => {
-    console.log(pickerOpen)
-    console.log(emoji)
+    // console.log(pickerOpen)
+    // console.log(emoji)
     setformData({
       ...formData,
       [pickerOpen.name]: `${formData[pickerOpen.name]} ${emoji}`
@@ -62,7 +89,6 @@ const CreatePost = () => {
     <StyledBox component='div'>
       <StyledContainer component='div'>
 
-
         <StyledForm onSubmit={handleSubmit}>
 
           <DragAndDrop
@@ -70,13 +96,13 @@ const CreatePost = () => {
             formData={formData}
             setClear={setClear}
             clear={clear}
+            imageToEdit={isEdit ? postToEdit?.selectedFile : null}
+
           />
 
 
           <StyledTextFiels component='div' >
-            {/* <StyledCreateButton > */}
 
-            {/* </StyledCreateButton> */}
 
             <Box >
               <TextField
@@ -119,15 +145,20 @@ const CreatePost = () => {
             />
 
 
-            <Button
-              variant='contained'
-              color='error'
-              size='small'
+         
+
+            <LoadingButton
+              size="small"
+              color="error"
               onClick={handleSubmit}
+              loading={loading}
+              loadingPosition="start"
+              // startIcon={<SaveIcon />}
+              variant="contained"
               sx={{ width: "80%", marginBottom: 2, marginTop: 2 }}
             >
-              Add post
-            </Button>
+              <span>Add post</span>
+            </LoadingButton>
 
             <Button
               variant='contained'
@@ -140,12 +171,12 @@ const CreatePost = () => {
             </Button>
 
             {pickerOpen.isopen && <EmojiPickerContainer>
-              <Fab 
-                size="medium" 
-                color="secondary" 
-                sx={{display:{xs:'flex', md:'none'}, marginBottom:1}}
+              <Fab
+                size="medium"
+                color="secondary"
+                sx={{ display: { xs: 'flex', md: 'none' }, marginBottom: 1 }}
                 onClick={() => setPickerOpen({ isopen: !pickerOpen.isopen, name: '' })}
-                >
+              >
                 <CloseIcon />
               </Fab>
               <EmojiPicker
@@ -156,6 +187,13 @@ const CreatePost = () => {
           </StyledTextFiels>
 
         </StyledForm>
+
+        <Notification
+          message={message}
+          isMessage={isMessage}
+        />
+
+
       </StyledContainer >
     </StyledBox >
 
@@ -164,7 +202,7 @@ const CreatePost = () => {
 
 
 
-const DragAndDrop = ({ setformData, formData, setClear, clear }) => {
+const DragAndDrop = ({ setformData, formData, setClear, clear, imageToEdit }) => {
   const [imageforPreview, setImageforPreview] = useState(null)
 
   useEffect(() => {
@@ -173,6 +211,13 @@ const DragAndDrop = ({ setformData, formData, setClear, clear }) => {
       setClear(false)
     }
   }, [clear])
+
+  useEffect(() => {
+    setImageforPreview(imageToEdit)
+  }, [imageToEdit])
+
+
+
 
   const convertToBase64 = (file) => {
     setImageforPreview(URL.createObjectURL(file))
@@ -219,8 +264,8 @@ const DragAndDrop = ({ setformData, formData, setClear, clear }) => {
               <label htmlFor='imageUpload' >
                 <AddPhotoAlternateIcon fontSize='large' color='secondary' />
               </label>
-              <Typography variant='p' sx={{display:{xs:'none',sm:'flex'}}}>Click or Drag and drop here</Typography>
-              <Typography variant='p' sx={{display:{xs:'flex',sm:'none'}}}>Seclect Image</Typography>
+              <Typography variant='p' sx={{ display: { xs: 'none', sm: 'flex' } }}>Click or Drag and drop here</Typography>
+              <Typography variant='p' sx={{ display: { xs: 'flex', sm: 'none' } }}>Seclect Image</Typography>
 
               <input
                 id="imageUpload"

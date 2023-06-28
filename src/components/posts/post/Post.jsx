@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
 import {
   Avatar, CardActions, CardContent, CardHeader, CardMedia,
-  Checkbox, IconButton, Typography, Menu, MenuItem, Popper, ListItemIcon
+  Checkbox, IconButton, Typography, Menu, MenuItem,
+  ListItemIcon, Collapse
 } from '@mui/material'
 
 import { grey, red } from '@mui/material/colors'
@@ -15,33 +17,72 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { StyledCard } from '../styles';
+import { deletePost, getComments, likePost } from '../../../redux/features/post/postActions'
 
-const Post = ({ post }) => {
-  const [moreOpen, setMoreOpen] = useState(false)
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import Comment from './Comment';
 
+
+
+
+const Post = ({ post, likedPostIds, userId, username }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [expanded, setExpanded] = useState(false)
+  const [likeState, setLikeState] = useState({
+    isLiked: false,
+    likeCount: post.like_count
+  })
+  const [commentCount, setcommentCount] = useState(null)
+  const dispatch = useDispatch()
+  const { postComments } = useSelector(state => state.post)
+
+
+
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
+  const handleLike = () => {
+    dispatch(likePost(post?._id, username))
+    setLikeState(prev => ({
+      isLiked: !prev.isLiked,
+      likeCount: !prev.isLiked ? prev.likeCount + 1 : prev.likeCount - 1
+    }))
+  }
+
+
+  const handleExpanded = () => {
+    setExpanded(prev => !prev)
+    if (expanded === false && !postComments[post._id]) {
+      dispatch(getComments(post._id))
+    }
+  }
+
+  useEffect(() => {
+    const bit = Boolean(likedPostIds.find(id => id === post._id))
+    console.log(bit)
+    setLikeState(prev => ({ ...prev, isLiked: bit }))
+  }, [likedPostIds.length])
 
   return (
-    <div sx={{ textAlign: 'center' }}>
+    <div style={{ alignItems: 'center' }} id='cardcontainer'>
 
-      <StyledCard raised={true}>
+      <StyledCard raised={true} >
         <CardHeader
+
           component='div'
           avatar={
             <Avatar sx={{ backgroundColor: red[500] }} aria-label="post">
-              {post?.creator?.charAt(0)}
+              {post?.creator_name?.charAt(0)}
             </Avatar>
           }
           action={
+            post.creator_id == userId &&
             <IconButton onClick={handleMenuOpen}>
               <MoreVertIcon />
             </IconButton>
@@ -55,9 +96,8 @@ const Post = ({ post }) => {
 
         <CardMedia
           component='img'
-          height='20%'
+          height={'200px'}
           image={post.selectedFile}
-          sx={{ height: { md: '30%' } }}
           alt='post image'
         />
 
@@ -70,51 +110,87 @@ const Post = ({ post }) => {
         </CardContent>
 
         <CardActions >
+
+          <>
+            {likeState.likeCount}
             <Checkbox
+              onClick={handleLike}
+              checked={likeState.isLiked}
               icon={<FavoriteBorder />}
               checkedIcon={<Favorite sx={{ color: red[500] }} />}
             />
+          </>
 
-          <IconButton>
-            <ModeCommentIcon />
-          </IconButton>
+          <>
+            {commentCount ? commentCount :  post.comment_count}
+            <IconButton onClick={handleExpanded}>
+              <ModeCommentIcon />
+            </IconButton>
+          </>
 
           <IconButton>
             <ShareIcon />
           </IconButton>
-
         </CardActions>
 
-      </StyledCard>
+        <Collapse in={expanded} timeout={'auto'} unmountOnExit>
+          <Comment
+            username={username}
+            postId={post._id}
+            postComments={postComments}
+            setcommentCount={setcommentCount}
+          />
+        </Collapse>
 
+      </StyledCard>
 
       <MoreMenu
         handleMenuClose={handleMenuClose}
         anchorEl={anchorEl}
         setAnchorEl={setAnchorEl}
+        postId={post._id}
+        post={post}
       />
+
 
     </div>
   )
 }
 
-export default Post
 
 
+const MoreMenu = ({ handleMenuClose, anchorEl, setAnchorEl, postId, post }) => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
+  const handleClick = (type) => {
+    switch (type) {
+      case 'delete':
+        dispatch(deletePost(postId))
+        handleMenuClose()
+        return
+      case 'edit':
+        handleMenuClose()
+        navigate('/edit', { state: { post } })
+        return
 
-const MoreMenu = ({ handleMenuClose, anchorEl, setAnchorEl }) => {
+      default:
+        handleMenuClose()
+        return
+    }
+
+  }
 
   return (
     <Menu open={Boolean(anchorEl)} anchorEl={anchorEl} onClose={handleMenuClose}>
-      <MenuItem onClick={handleMenuClose}>
+      <MenuItem onClick={() => handleClick('delete')}>
         <ListItemIcon>
           <DeleteIcon fontSize="small" />
         </ListItemIcon>
         <Typography variant="inherit">Delete</Typography>
       </MenuItem>
 
-      <MenuItem onClick={handleMenuClose}>
+      <MenuItem onClick={() => handleClick('edit')}>
         <ListItemIcon>
           <EditTwoToneIcon fontSize='small' />
         </ListItemIcon>
@@ -123,3 +199,7 @@ const MoreMenu = ({ handleMenuClose, anchorEl, setAnchorEl }) => {
     </Menu>
   )
 }
+
+
+
+export default Post

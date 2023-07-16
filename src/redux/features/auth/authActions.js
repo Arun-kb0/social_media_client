@@ -1,12 +1,19 @@
-import { AUTH, LOGOUT, LOCALSTORAGE_USER } from '../../../constants/actionTypes'
-import { useNavigate } from 'react-router-dom'
+import {
+    AUTH, LOCALSTORAGE_USER,
+    LOGOUT_SUCCESS, LOGOUT_START, LOGOUT_FAILED
+} from '../../../constants/actionTypes'
 import * as api from '../../../api/apiIndex'
 
 export const socialAuth = (provider, data) => async (dispatch) => {
     console.warn('socialAuth actions')
     try {
-        const result = data
+        // const result = data
         const token = data.credential
+        const { status, data: { result } } = await api.socialAuth({ provider, data })
+        console.warn(`status  ${status}`)
+        console.log(result)
+        if (!status === 200)
+            throw new Error('login failed')
         dispatch({
             type: AUTH,
             payload: { result, token }
@@ -22,6 +29,7 @@ export const signIn = (formData) => async (dispatch) => {
     console.log('signIn')
     try {
         const { data } = await api.signin(formData)
+        console.log(data)
         dispatch({ type: AUTH, payload: data })
     } catch (error) {
         console.error(error)
@@ -36,6 +44,7 @@ export const signUp = (formData) => async (dispatch) => {
 
     try {
         const { data } = await api.signup(formData)
+        console.log(data)
         dispatch({ type: AUTH, payload: data })
     } catch (error) {
         console.error(error)
@@ -44,12 +53,21 @@ export const signUp = (formData) => async (dispatch) => {
 }
 
 
-export const logout = () => (dispatch) => {
+export const logout = () => async(dispatch, getState) => {
     console.log('logout')
+    const {userId} = getState().auth
+    dispatch({ type: LOGOUT_START })
     try {
-        dispatch({ type: LOGOUT, payload: null })
+        const data =  await api.logout(userId)
+        const {status } = data
+        console.log(data)
+        if (status === 200)
+            dispatch({ type: LOGOUT_SUCCESS, payload: null })
+        else
+            throw new Error({status, data})
     } catch (error) {
         console.error(error);
+        dispatch({ type: LOGOUT_FAILED, payload: error })
     }
 }
 
@@ -59,6 +77,7 @@ export const getLocalStroageUser = () => (dispatch) => {
     user
         ? dispatch({ type: LOCALSTORAGE_USER, payload: user })
         : dispatch({ type: LOCALSTORAGE_USER, payload: null })
-
 }
+
+
 

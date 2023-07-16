@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import { StyledPaper, StyledAvatar, StyledForm, StyledBox } from './styles';
 import { signIn, signUp, socialAuth } from '../../redux/features/auth/authActions';
+import { getFollowing } from '../../redux/features/user/userActions';
 
 
 const Auth = () => {
@@ -36,7 +37,7 @@ const Auth = () => {
   const navigate = useNavigate()
 
   const [formData, setformData] = useState(initialDataState)
-  const [isSignUp, setisSignUp] = useState(true)
+  const [isSignUp, setisSignUp] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [inputerror, setInputerror] = useState(initialErrorState)
 
@@ -118,7 +119,7 @@ const Auth = () => {
           </Typography>
 
           <StyledForm onSubmit={handleSubmit} >
-            <Box  spacing={2} mb={2} >
+            <Box spacing={2} mb={2} >
               {isSignUp && (
                 <Box display={'flex'} gap={1} mb={1}>
                   <TextField

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 
 import {
   Avatar, CardActions, CardContent, CardHeader, CardMedia,
-  Checkbox, IconButton, Typography, Menu, MenuItem,
-  ListItemIcon, Collapse
+  Checkbox, IconButton, Typography, Menu, MenuItem, Box,
+  ListItemIcon, Collapse, Zoom
 } from '@mui/material'
 
 import { grey, red } from '@mui/material/colors'
@@ -24,9 +24,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Comment from './Comment';
 
 
-
-
-const Post = ({ post, likedPostIds, userId, username }) => {
+const Post = ({ post, likedPostIds, userId, username, isPostsOpen }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [expanded, setExpanded] = useState(false)
   const [likeState, setLikeState] = useState({
@@ -70,7 +68,7 @@ const Post = ({ post, likedPostIds, userId, username }) => {
   }, [likedPostIds.length])
 
   return (
-    <div style={{ alignItems: 'center' }} id='cardcontainer'>
+    <Box sx={{ alignItems: 'center' }} id='cardcontainer'>
 
       <StyledCard raised={true} >
         <CardHeader
@@ -110,7 +108,6 @@ const Post = ({ post, likedPostIds, userId, username }) => {
         </CardContent>
 
         <CardActions >
-
           <>
             {likeState.likeCount}
             <Checkbox
@@ -122,7 +119,7 @@ const Post = ({ post, likedPostIds, userId, username }) => {
           </>
 
           <>
-            {commentCount ? commentCount :  post.comment_count}
+            {commentCount ? commentCount : post.comment_count}
             <IconButton onClick={handleExpanded}>
               <ModeCommentIcon />
             </IconButton>
@@ -151,9 +148,7 @@ const Post = ({ post, likedPostIds, userId, username }) => {
         postId={post._id}
         post={post}
       />
-
-
-    </div>
+    </Box>
   )
 }
 

@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom'
 
 import MobileMenu from './MobileMenu';
 import NavIcon from './NavIcon';
+import { useSelector } from 'react-redux';
 
 
 
@@ -27,6 +28,8 @@ const Navbar = () => {
   const [open, setOpen] = useState(false)
   const [openMobileMenu, setOpenMobileMenu] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const { isOnline  , photo} = useSelector(state => state.auth)
 
   const handleDrawer = () => {
     setDrawerOpen(prev => !prev)
@@ -37,7 +40,7 @@ const Navbar = () => {
     <Box sx={{ flexGrow: 1 }}    >
       <AppBar
         //  position='static'
-        sx={{ position: 'fixed', right: 0, top: 0, left: 0, backgroundColor:'white' }}
+        sx={{ position: 'fixed', right: 0, top: 0, left: 0, backgroundColor: 'white' }}
         sName="mui-fixed"
       >
 
@@ -78,10 +81,14 @@ const Navbar = () => {
             <NavIcon icon={<NotificationsIcon />} badgeContent={4} />
             <NavIcon icon={
               <Avatar
-                src={propic}
+                src={photo ? photo : ''}
                 sx={{ width: 30, height: 30 }}
                 onClick={(() => { setOpen(prev => !prev) })}
               />}
+              badgeContent={''}
+              variant={'dot'}
+              isOnline={isOnline}
+              overlap={'circular'}
             />
           </Icons>
 

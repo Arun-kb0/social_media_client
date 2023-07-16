@@ -1,6 +1,7 @@
 import { CardHeader, styled } from "@mui/material";
 import { Card, Box } from '@mui/material'
 import { grey } from '@mui/material/colors';
+import ScrollToBottom from 'react-scroll-to-bottom'
 
 
 export const StyledPostsBox = styled(Box)(({ theme }) => ({
@@ -44,9 +45,21 @@ export const CommentBox = styled(Box)(({ theme }) => ({
     borderRadius: '10px',
     backgroundColor: grey[200],
     padding: 10,
-    paddingLeft:12,
+    paddingLeft: 12,
     maxWidth: '250px',
 }))
+
+
+
+
+export const StyledScrollToBottom = styled(ScrollToBottom)(({ theme }) => ({
+    paddingTop: 1,
+    paddingBottom: 2,
+    maxHeight: '200px',
+    overflowY: 'scroll'
+    
+}))
+
 
 
 

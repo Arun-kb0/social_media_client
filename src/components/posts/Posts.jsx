@@ -1,12 +1,11 @@
-import { Box } from '@mui/material'
+import { Box, Grow, Zoom } from '@mui/material'
 import React, { useEffect, Fragment, useState } from 'react'
 import Post from './post/Post'
 import { useDispatch, useSelector } from 'react-redux'
-import { getComments, getLikedPosts, getPosts } from '../../redux/features/post/postActions'
+import { getLikedPosts, getPosts } from '../../redux/features/post/postActions'
 import { StyledPostsBox } from './styles'
 
 import { Waypoint } from 'react-waypoint'
-import createMixins from '@mui/material/styles/createMixins'
 
 const Posts = () => {
   const dispatch = useDispatch()
@@ -15,6 +14,8 @@ const Posts = () => {
 
   const { posts, currentPage, numberOfPages, postIds, likedPostIds } = useSelector(state => state.post)
   const { authData, userId, username } = useSelector(state => state.auth)
+  const { isPostsOpen } = useSelector(state => state.buttonToggle)
+
 
   useEffect(() => {
     if (!isCancelled) {
@@ -46,23 +47,29 @@ const Posts = () => {
   // console.log(posts)
   return (
     <StyledPostsBox >
+
       <Box sx={{ paddingBottom: 7 }} id='cards container'>
         {posts?.map((post, index) => (
           <Fragment key={`fragment${post._id}`} >
-            <Post
+
+
+            {<Post
               key={post._id}
               post={post}
               likedPostIds={likedPostIds}
               userId={userId}
               username={username}
-            />
+              isPostsOpen={isPostsOpen}
+            />}
+
             {/* {index === posts.length - 3 && */}
             {index === posts.length - 2 &&
               <Waypoint onPositionChange={handlePage} key={`waypoint${post._id}`} />}
           </Fragment>
         ))}
       </Box>
-    </StyledPostsBox>
+
+    </StyledPostsBox >
 
   )
 }

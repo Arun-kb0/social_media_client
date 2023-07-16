@@ -12,6 +12,7 @@ export const Search = styled(Box)(({ theme }) => ({
     position: 'relative',
     marginRight: theme.spacing(2),
     marginLeft: 0,
+
     width: '100%',
     borderRadius: '30px',
     // backgroundColor: alpha(theme.palette.common.white, 0.15),

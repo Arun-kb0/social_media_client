@@ -10,6 +10,9 @@ import Navbar from './components/navbar/Navbar'
 import { useSelector , useDispatch } from 'react-redux'
 import { getLocalStroageUser } from './redux/features/auth/authActions'
 import EditPost from './components/createPost/EditPost'
+import UserProfile from './components/userProfile/UserProfile'
+import Chat from './components/chat/Chat'
+
 
 const App = () => {
   const dispatch = useDispatch()
@@ -29,6 +32,8 @@ const App = () => {
           <Route path='/auth' element={<Auth />} />
           <Route path='/create' element={authData?.result ? <CreatePost /> : <Navigate to='/auth' />} />
           <Route path='/edit' element={authData?.result ? <EditPost /> : <Navigate to='/auth' />} />
+          <Route path='/profile' element={authData?.result ? <UserProfile /> : <Navigate to='/auth' />} />
+          <Route path='/chat' element={authData?.result ? <Chat /> : <Navigate to='/auth' />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

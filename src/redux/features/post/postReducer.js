@@ -6,7 +6,8 @@ import {
     GET_LIKED_FAILED, GET_LIKED_SUCCESS, GET_LIKED_START,
     COMMENT_START, COMMENT_SUCCESS, COMMENT_FAILED,
     GET_COMMENT_START, GET_COMMENT_SUCCESS, GET_COMMENT_FAILED,
-    CREATE_POST_START, CREATE_POST_SUCCESS, CREATE_POST_FAILED
+    CREATE_POST_START, CREATE_POST_SUCCESS, CREATE_POST_FAILED,
+    GET_USER_POST_START, GET_USER_POST_SUCCESS, GET_USER_POST_FAILED
 
 
 } from "../../../constants/actionTypes";
@@ -16,6 +17,7 @@ const initialState = {
     postIds: [],
     likedPostIds: [],
     postComments: {},
+    userPosts: [],
     currentPage: null,
     numberOfPages: null,
     loading: false,
@@ -53,6 +55,7 @@ const postReducer = (state = initialState, action) => {
             return {
                 ...state,
                 message: action.payload.message,
+                posts:[action.payload.newPost , ...state.posts],
                 isMessage: !state.isMessage,
                 loading: false,
             }
@@ -152,19 +155,29 @@ const postReducer = (state = initialState, action) => {
 
         case COMMENT_START:
             return {
-                ...state
+                ...state,
+                loading:true
             }
-        case COMMENT_SUCCESS: //! fix
+        case COMMENT_SUCCESS: 
             const { commentedPostId, comment } = action.payload
-            state.postComments[commentedPostId].push(comment)
-            // console.warn(state.postComments[commentedPostId])
+            const updatedComments = [comment,...state?.postComments[commentedPostId]]
+
             return {
                 ...state,
+                postComments:{
+                    ...state.postComments,
+                    [commentedPostId]:updatedComments
+                },
+                loading:false
+                // postComments[commentedPostId]:updatedComments
+
+
             }
         case COMMENT_FAILED:
             return {
                 ...state,
-                error: action.payload
+                error: action.payload,
+                loading:false
             }
 
 
@@ -188,6 +201,23 @@ const postReducer = (state = initialState, action) => {
                 loading: false
             }
 
+
+        case GET_USER_POST_START:
+            return {
+                ...state,
+                loading: true
+            }
+        case GET_USER_POST_SUCCESS:
+            return {
+                ...state,
+                userPosts: action.payload,
+                loading: false
+            }
+        case GET_USER_POST_FAILED:
+            return {
+                ...state,
+                loading: false
+            }
 
 
         default:

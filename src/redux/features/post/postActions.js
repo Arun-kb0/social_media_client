@@ -5,7 +5,8 @@ import {
     LIKE_START, LIKE_SUCCESS, LIKE_FAILED,
     GET_LIKED_START, GET_LIKED_SUCCESS, GET_LIKED_FAILED,
     COMMENT_START, COMMENT_SUCCESS, COMMENT_FAILED, GET_COMMENT_START, GET_COMMENT_SUCCESS, GET_COMMENT_FAILED,
-    CREATE_POST_START, CREATE_POST_SUCCESS, CREATE_POST_FAILED
+    CREATE_POST_START, CREATE_POST_SUCCESS, CREATE_POST_FAILED,
+    GET_USER_POST_START, GET_USER_POST_SUCCESS, GET_USER_POST_FAILED
 
 } from "../../../constants/actionTypes";
 import * as api from '../../../api/apiIndex'
@@ -29,8 +30,8 @@ export const createPost = (post) => async (dispatch) => {
     dispatch({ type: CREATE_POST_START })
 
     const tags = post.tags.replace(/\s/g, "").split(",")
-    console.warn(post)
-    console.log(tags)
+    // console.warn(post)
+    // console.log(tags)
     try {
         const { data: { message, newPost } } = await api.createPost({ ...post, tags })
         console.log(message)
@@ -134,5 +135,19 @@ export const getComments = (postId) => async (dispactch) => {
     } catch (error) {
         console.log(error)
         dispactch({ type: GET_COMMENT_FAILED, payload: error })
+    }
+}
+
+
+export const getUserPosted = () => async (dispatch) => {
+    dispatch({ type: GET_USER_POST_START })
+    try {
+        const { data: { userPosts } } = await api.getUserPosted()
+        console.log(userPosts);
+        dispatch({ type: GET_USER_POST_SUCCESS, payload: userPosts })
+
+    } catch (error) {
+        console.log(error)
+        dispatch({ type: GET_USER_POST_FAILED, payload: error })
     }
 }

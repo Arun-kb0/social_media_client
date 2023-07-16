@@ -7,9 +7,13 @@ import Drawer from '../leftSidebar/Drawer'
 import AddIcon from '@mui/icons-material/Add';
 import { grey } from '@mui/material/colors'
 import { useNavigate } from 'react-router-dom'
+import FindPeople from '../people/FindPeople'
+import { useSelector } from 'react-redux'
+import Following from '../people/Following'
 
 const Home = () => {
     const navigate = useNavigate()
+    const { isFindPeopleOpen, isPostsOpen,isFollowOpen } = useSelector(state => state.buttonToggle)
 
     return (
         <Box
@@ -21,12 +25,14 @@ const Home = () => {
                 spacing={2}
                 justifyContent='space-between'
                 bgcolor={grey[300]}
-                sx={{ overflowY: 'scroll', maxHeight: '100vh', height:'100vh' }}
+                sx={{ overflowY: 'scroll', maxHeight: '100vh', height: '100vh' }}
 
             >
                 <LeftSidebar />
                 <Drawer />
-                <Posts />
+                {isPostsOpen && <Posts />}
+                {isFindPeopleOpen && <FindPeople />}
+                {isFollowOpen && <Following/>}
                 <RightSidebar />
 
 

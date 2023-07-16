@@ -8,9 +8,12 @@ import { grey } from '@mui/material/colors'
 import { StyledBox, StyledInnerBox, StyledTypography } from './styles'
 
 import propic from '../../images/propic.jpg'
+import { useSelector } from 'react-redux'
 
 
 const RightSidebar = () => {
+  const {} = useSelector(state=> state.user)
+  
   return (
     <Box
       borderRadius={1}

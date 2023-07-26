@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import {
   Avatar, CardActions, CardContent, CardHeader, CardMedia,
@@ -17,14 +17,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { StyledCard } from '../styles';
-import { deletePost, getComments, likePost } from '../../../redux/features/post/postActions'
+import { deletePost, getComments } from '../../../redux/features/post/postActions'
 
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Comment from './Comment';
+import useDebounce from '../../../hooks/useDebounce';
 
 
-const Post = ({ post, likedPostIds, userId, username, isPostsOpen }) => {
+const Post = ({ post, likedPostIds, userId, username, isPostsOpen, creatorId, handleLike }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [expanded, setExpanded] = useState(false)
   const [likeState, setLikeState] = useState({
@@ -36,23 +37,12 @@ const Post = ({ post, likedPostIds, userId, username, isPostsOpen }) => {
   const { postComments } = useSelector(state => state.post)
 
 
-
-
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-
-  const handleLike = () => {
-    dispatch(likePost(post?._id, username))
-    setLikeState(prev => ({
-      isLiked: !prev.isLiked,
-      likeCount: !prev.isLiked ? prev.likeCount + 1 : prev.likeCount - 1
-    }))
-  }
-
 
   const handleExpanded = () => {
     setExpanded(prev => !prev)
@@ -66,6 +56,8 @@ const Post = ({ post, likedPostIds, userId, username, isPostsOpen }) => {
     console.log(bit)
     setLikeState(prev => ({ ...prev, isLiked: bit }))
   }, [likedPostIds.length])
+
+
 
   return (
     <Box sx={{ alignItems: 'center' }} id='cardcontainer'>
@@ -111,7 +103,8 @@ const Post = ({ post, likedPostIds, userId, username, isPostsOpen }) => {
           <>
             {likeState.likeCount}
             <Checkbox
-              onClick={handleLike}
+              // onClick={handleLikeHelper}
+              onClick={() => handleLike({ ...post, setLikeState })}
               checked={likeState.isLiked}
               icon={<FavoriteBorder />}
               checkedIcon={<Favorite sx={{ color: red[500] }} />}

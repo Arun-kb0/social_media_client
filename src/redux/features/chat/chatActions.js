@@ -9,6 +9,7 @@ import {
 import { v4 as uuid } from "uuid"
 import * as api from '../../../api/apiIndex'
 import { follow } from "../user/userActions"
+import { useEffect } from "react"
 
 export const createRoom = ({ socket, id, name, photo }) => async (dispatch, getState) => {
     dispatch({ type: CREATE_CHAT_START })
@@ -46,7 +47,7 @@ export const createRoom = ({ socket, id, name, photo }) => async (dispatch, getS
 }
 
 
-export const sendMessage = ({ socket, id, messageInput }) => async (dispatch, getState) => {
+export const sendMessage = ({ socket, id, messageInput }) => (dispatch, getState) => {
     dispatch({ type: SEND_MESSAGE_START })
     const { roomId } = getState().chat
     const { username, userId } = getState().auth
@@ -60,44 +61,55 @@ export const sendMessage = ({ socket, id, messageInput }) => async (dispatch, ge
             message: messageInput,
             createdAt: new Date()
         }
-        await socket?.emit("send_message", messageData)
+        socket?.emit("send_message", messageData)
         dispatch({ type: SEND_MESSAGE_SUCCESS, payload: messageData })
     } catch (error) {
         console.log(error)
         dispatch({ type: SEND_MESSAGE_FAILED })
     }
+
 }
 
 
-export const reciveMessage = ({ socket }) => async (dispatch) => {
+export const reciveMessage = ( {socket} ) => (dispatch, getState) => {
 
     dispatch({ type: RECIVE_MESSAGE_START })
+        console.log(socket)
+
+    const reciveMessageHandler = (data) => {
+        // console.log(data)
+        dispatch({ type: RECIVE_MESSAGE_SUCCESS, payload: data })
+    }
     try {
-        socket?.on("recive_message", (data) => {
-            console.log("recive_message" , data)
-            console.log(data)
-            dispatch({ type: RECIVE_MESSAGE_SUCCESS, payload: data })
-        })
+        socket.on("recive_message", reciveMessageHandler)
+        console.log(" recive_message on")
+
     } catch (error) {
         console.log(error)
         dispatch({ type: RECIVE_MESSAGE_FAILED, payload: error })
-
     }
+
+    return () => {
+        socket.off("recive_message", reciveMessageHandler)
+        console.log("recive_message off")
+    }
+
 }
+
 
 
 export const getChatUsers = () => async (dispatch, getState) => {
     dispatch({ type: GET_CHAT_USERS_START })
 
     try {
-        const { data: { following } } = await api.getFollowing() 
+        const { data: { following } } = await api.getFollowing()
         const { data: { chatUsers } } = await api.getChatUsers()
         const lastMessageAddedList = following.map((user, i) => {
             const chatUser = chatUsers?.find(chatUser => chatUser.v.user.userId === user.id)
             if (chatUser) {
                 return { ...user, lastMessage: chatUser.v.lastMessage }
             } else
-                return user 
+                return user
         })
 
         dispatch({ type: GET_CHAT_USERS_SUCCESS, payload: lastMessageAddedList })
@@ -119,7 +131,7 @@ export const getMessages = ({ id }) => async (dispatch, getState) => {
             roomId = id + userId
         }
 
-        const { data:{data} } = await api.getMessages(roomId)
+        const { data: { data } } = await api.getMessages(roomId)
         console.log(data)
         // let messages
         // if (data) {
@@ -135,8 +147,8 @@ export const getMessages = ({ id }) => async (dispatch, getState) => {
 }
 
 
-export const clearChatState = ()=> (dispatch)=>{
-    dispatch({type:CLEAR_CHAT_STATE , payload:null})
+export const clearChatState = () => (dispatch) => {
+    dispatch({ type: CLEAR_CHAT_STATE, payload: null })
 }
 
 

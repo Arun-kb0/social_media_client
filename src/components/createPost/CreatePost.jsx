@@ -41,6 +41,7 @@ const CreatePost = (props) => {
   const { authData } = useSelector(state => state.auth)
   const { message, isMessage, loading } = useSelector(state => state.post)
 
+  
 
   useEffect(() => {
     console.log("postToEdit useEffect")

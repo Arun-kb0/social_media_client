@@ -8,37 +8,28 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import CallIcon from '@mui/icons-material/Call';
 import Message from './Message';
 import { useSelector, useDispatch } from 'react-redux'
-import { getFollowing } from '../../redux/features/user/userActions';
-import io from 'socket.io-client'
-import { getChatUsers, reciveMessage, sendMessage } from '../../redux/features/chat/chatActions';
+import {  reciveMessage, sendMessage } from '../../redux/features/chat/chatActions';
 import ChatUsers from './ChatUsers';
 
 
 const Chat = () => {
-    const [socket, setSocket] = useState(null)
+    const chatContainerRef = useRef(null)
     const [messageInput, setMessageInput] = useState('')
+    const [chatsocket, setChatsocket] = useState(null)
+
     const dispatch = useDispatch()
     const { messages, chatUser, chatUsers } = useSelector(state => state.chat)
     const { userId } = useSelector(state => state.auth)
-
-    const chatContainerRef = useRef(null)
-
-    useEffect(() => {
-        const socket = io.connect('http://localhost:3001')
-        setSocket(socket)
-
-        return () => {
-            socket.disconnect()
-        }
-    }, [])
+    const { socket } = useSelector(state => state.socketioReducer)
 
     useEffect(() => {
-        dispatch(reciveMessage({ socket }))
-    }, [socket])
+        const cleanup = dispatch(reciveMessage({ socket }));
+        return () => dispatch(cleanup)
+    }, [socket]);
 
     useEffect(() => {
         setTimeout(() => {
-            chatContainerRef.current.scrollIntoView({ behavior: "smooth" });
+            chatContainerRef?.current?.scrollIntoView({ behavior: "smooth" });
         }, [100])
     }, [messages?.length])
 

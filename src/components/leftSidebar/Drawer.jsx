@@ -7,8 +7,8 @@ import HomeIcon from '@mui/icons-material/Home';
 
 const Drawer = () => {
     const [open, setOpen] = useState(true)
-    const tmp = localStorage.getItem('openDrawer')
-    console.log(tmp)
+    // const tmp = localStorage.getItem('openDrawer')
+    // console.log(tmp)
 
     return (
         <SwipeableDrawer

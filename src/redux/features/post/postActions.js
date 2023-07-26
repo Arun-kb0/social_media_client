@@ -12,7 +12,8 @@ import {
 import * as api from '../../../api/apiIndex'
 import axios from "axios";
 
-
+import { v4 as uuid } from "uuid";
+import { useRef } from "react";
 
 export const getPosts = (page) => async (dispatch) => {
     try {
@@ -79,20 +80,55 @@ export const editPost = (updatedPost) => async (dispatch) => {
 }
 
 
-export const likePost = (postId, username) => async (dispatch) => {
+
+export const likePostListener = ({ postId, username, creatorId }) => (dispatch, getState) => {
+    const { userId } = getState().auth
+    const { socket } = getState().socketioReducer
+
     dispatch({ type: LIKE_START })
+    console.log("like listener on")
+    console.log(postId, username, creatorId)
+
+    let likecount
+    const likeHandler = (data) => {
+        console.log(data)
+        likecount = data.likecount
+        if (creatorId !== userId)
+            socket.emit("sendNotification",
+                { postId, username, creatorId, type: 'liked', }
+            )
+    }
+
+    const disLikeHandler = (data) => {
+        console.log(data)
+        likecount = data.likecount
+    }
+
+    const LikeFailedHandler = (error) => {
+        socket.off("likePostFailedRes", LikeFailedHandler)
+        throw new Error({ message: 'like failed ', error })
+    }
+
     try {
-        const { data: { likecount } } = await api.likePost({ postId, username })
-        console.log(likecount)
-        dispatch({
-            type: LIKE_SUCCESS,
-            payload: { likecount, postId }
-        })
+        socket.on("postLiked", likeHandler)
+        socket.on("postDisliked", disLikeHandler)
+        socket.on("likePostFailedRes", LikeFailedHandler)
+
+        dispatch({ type: LIKE_SUCCESS, payload: { likecount, postId } })
+
     } catch (error) {
         console.log(error)
         dispatch({ type: LIKE_FAILED, payload: error })
     }
+
+    return () => {
+        console.log("like listener off")
+        socket.off("postLiked", likeHandler)
+        socket.off("postDisliked", disLikeHandler)
+        socket.off("likePostFailedRes", LikeFailedHandler)
+    }
 }
+
 
 
 export const getLikedPosts = (postIds) => async (dispatch) => {
@@ -151,3 +187,6 @@ export const getUserPosted = () => async (dispatch) => {
         dispatch({ type: GET_USER_POST_FAILED, payload: error })
     }
 }
+
+
+

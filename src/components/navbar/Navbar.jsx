@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
-  AppBar, Typography, Avatar, MenuItem, Menu, Fade, Box, Button,
+  AppBar, Typography, Avatar, MenuItem, Menu, Fade, Box, Button, MenuList, Paper,
 } from '@mui/material'
 import {
   Search, StyledToolbar, Icons, UserBox, SearchIconWrapper,
@@ -20,21 +20,81 @@ import { Link } from 'react-router-dom'
 
 import MobileMenu from './MobileMenu';
 import NavIcon from './NavIcon';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { corsOptions } from '../../../../server/config/corsOptions';
+import { getAllNotifications,ReciveNotifications } from '../../redux/features/user/userActions';
 
 
 
 const Navbar = () => {
+  const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
   const [openMobileMenu, setOpenMobileMenu] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  const { isOnline  , photo} = useSelector(state => state.auth)
+  const [notificationMenuOpen, setNotificationMenuOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null)
+
+
+  const { isOnline, photo } = useSelector(state => state.auth)
+  const { socket } = useSelector(state => state.socketioReducer)
+  const { notification } = useSelector(state => state.user)
+
 
   const handleDrawer = () => {
     setDrawerOpen(prev => !prev)
     localStorage.setItem("drawerOpen", drawerOpen)
   }
+
+  useEffect(()=>{
+    dispatch(getAllNotifications())
+  },[])
+
+
+  useEffect(() => {
+    if (socket) {
+      const cleanup = dispatch(ReciveNotifications())
+      return () => dispatch(cleanup)
+    }
+  }, [socket])
+
+
+  const handleClick = (type, e) => {
+    switch (type) {
+      case 'noti':
+        setAnchorEl(e.currentTarget);
+        setNotificationMenuOpen(true)
+        return;
+      case 'more':
+        setAnchorEl(e.currentTarget)
+        setOpen(true)
+        return
+
+      default:
+        return;
+    }
+    // setAnchorEl(e.currentTarget);
+    // setNotificationMenuOpen(true)
+  };
+
+  const handleClose = (type) => {
+    switch (type) {
+      case 'noti':
+        setAnchorEl(null);
+        setNotificationMenuOpen(false)
+        return;
+      case 'more':
+        setOpen(false)
+        setAnchorEl(null)
+        return
+
+      default:
+        return;
+    }
+
+  };
+
+
 
   return (
     <Box sx={{ flexGrow: 1 }}    >
@@ -78,12 +138,21 @@ const Navbar = () => {
 
           <Icons>
             <NavIcon icon={<MailIcon />} badgeContent={4} />
-            <NavIcon icon={<NotificationsIcon />} badgeContent={4} />
+            <NavIcon
+              icon={
+                <NotificationsIcon
+                  // onClick={() => setNotificationMenuOpen(prev => !prev)}
+                  onClick={(e) => handleClick('noti', e)}
+                />
+              }
+              badgeContent={notification ? notification.length : null}
+            />
             <NavIcon icon={
               <Avatar
                 src={photo ? photo : ''}
                 sx={{ width: 30, height: 30 }}
-                onClick={(() => { setOpen(prev => !prev) })}
+                // onClick={() => { setOpen(prev => !prev) }}
+                onClick={(e) => handleClick('more', e)}
               />}
               badgeContent={''}
               variant={'dot'}
@@ -97,15 +166,13 @@ const Navbar = () => {
           </UserBox>
         </StyledToolbar>
 
-
+        {/* user buttons */}
         <Menu
           // disableScrollLock={true}
           id="fade-menu"
-          MenuListProps={{
-            'aria-labelledby': 'fade-button',
-          }}
+          MenuListProps={{ 'aria-labelledby': 'fade-button', }}
           open={open}
-          onClose={() => { setOpen(!open) }}
+          onClose={() => handleClose('more')}
           TransitionComponent={Fade}
           anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -116,6 +183,13 @@ const Navbar = () => {
           <MenuItem onClick={() => { }}>Logout</MenuItem>
         </Menu>
 
+        <NotificationMenu
+          open={notificationMenuOpen}
+          notification={notification}
+          anchorEl={anchorEl}
+          handleClose={handleClose}
+          handleClick={handleClick}
+        />
 
         <MobileMenu
           openMobileMenu={openMobileMenu}
@@ -127,6 +201,43 @@ const Navbar = () => {
   )
 }
 
+
+const NotificationMenu = ({ open, notification, anchorEl, handleClose }) => {
+
+  return (
+    <Menu
+      id="notificationMenu"
+      MenuListProps={{ 'aria-labelledby': 'fade-button', }}
+      PaperProps={{
+        style: {
+          maxHeight: 200,
+          // width: '35ch',
+        },
+      }}
+
+      anchorEl={anchorEl}
+      open={open}
+      onClose={() => handleClose('noti')}
+      TransitionComponent={Fade}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      marginThreshold={62}
+    >
+
+      {notification && <Button variant='contained' size='small'sx={{marginLeft:1}}>Clear</Button>}
+      {notification
+        ? notification.map((data) => (
+          <MenuItem key={data._id}>
+            {`${data.likedUserName} ${data.actionType} your post`}
+          </MenuItem>
+        ))
+        : <MenuItem>No new notifications</MenuItem>
+      }
+
+    </Menu>
+
+  )
+}
 
 
 export default Navbar

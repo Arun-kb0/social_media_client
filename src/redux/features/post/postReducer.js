@@ -25,6 +25,7 @@ const initialState = {
     message: null,
     isMessage: false,
 
+    isNotificationSend: false
 }
 
 const postReducer = (state = initialState, action) => {
@@ -55,7 +56,7 @@ const postReducer = (state = initialState, action) => {
             return {
                 ...state,
                 message: action.payload.message,
-                posts:[action.payload.newPost , ...state.posts],
+                posts: [action.payload.newPost, ...state.posts],
                 isMessage: !state.isMessage,
                 loading: false,
             }
@@ -127,6 +128,7 @@ const postReducer = (state = initialState, action) => {
             return {
                 ...state,
                 posts: updatedPost,
+                isNotificationSend: action.payload.notificationSend,
                 loading: false
             }
         case LIKE_FAILED:
@@ -156,19 +158,19 @@ const postReducer = (state = initialState, action) => {
         case COMMENT_START:
             return {
                 ...state,
-                loading:true
+                loading: true
             }
-        case COMMENT_SUCCESS: 
+        case COMMENT_SUCCESS:
             const { commentedPostId, comment } = action.payload
-            const updatedComments = [comment,...state?.postComments[commentedPostId]]
+            const updatedComments = [comment, ...state?.postComments[commentedPostId]]
 
             return {
                 ...state,
-                postComments:{
+                postComments: {
                     ...state.postComments,
-                    [commentedPostId]:updatedComments
+                    [commentedPostId]: updatedComments
                 },
-                loading:false
+                loading: false
                 // postComments[commentedPostId]:updatedComments
 
 
@@ -177,7 +179,7 @@ const postReducer = (state = initialState, action) => {
             return {
                 ...state,
                 error: action.payload,
-                loading:false
+                loading: false
             }
 
 

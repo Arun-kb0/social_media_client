@@ -1,6 +1,6 @@
 import {
     GET_USERS_START, GET_USERS_SUCCESS, GET_USERS_FAILED,
-    FOLLOW_START, FOLLOW_FAILED, FOLLOW_SUCCESS, GET_FOLLOWING_START, GET_FOLLOWING_SUCCESS
+    FOLLOW_START, FOLLOW_FAILED, FOLLOW_SUCCESS, GET_FOLLOWING_START, GET_FOLLOWING_SUCCESS, GET_NOTIFICATIONS_START, GET_NOTIFICATIONS_SUCCESS, GET_NOTIFICATIONS_FAILED, RECIVE_NOTIFICATION_SUCCESS, RECIVE_NOTIFICATION_FAILED, RECIVE_NOTIFICATION_START
 } from '../../../constants/actionTypes'
 
 
@@ -13,7 +13,8 @@ const initialState = {
         numberOfPages: null,
     },
     following: [],
-    followers: []
+    followers: [],
+    notification: null
 }
 
 const userReducer = (state = initialState, action) => {
@@ -74,14 +75,58 @@ const userReducer = (state = initialState, action) => {
         case GET_FOLLOWING_SUCCESS:
             return {
                 ...state,
-                following:action.payload,
+                following: action.payload,
                 loading: false
             }
 
         case GET_FOLLOWING_START:
             return {
                 ...state,
-                error:action.payload,
+                error: action.payload,
+                loading: false
+            }
+
+            
+        case GET_NOTIFICATIONS_START:
+            return {
+                ...state,
+                loading: true
+            }
+        case GET_NOTIFICATIONS_SUCCESS:
+            return {
+                ...state,
+                notification: action.payload,
+                loading: false
+            }
+        case GET_NOTIFICATIONS_FAILED:
+            return {
+                ...state,
+                error: action.payload,
+                loading: false
+            }
+
+
+        case RECIVE_NOTIFICATION_START:
+            return {
+                ...state,
+                loading: true
+            }
+        case RECIVE_NOTIFICATION_SUCCESS:
+            const getUnique = () => {
+                const unique = new Set([...state.notification, action.payload])
+                return Array.from(unique)
+            }
+            return {
+                ...state,
+                notification: state.notification
+                    ? getUnique()
+                    : [action.payload],
+                loading: false
+            }
+        case RECIVE_NOTIFICATION_FAILED:
+            return {
+                ...state,
+                error: action.payload,
                 loading: false
             }
 

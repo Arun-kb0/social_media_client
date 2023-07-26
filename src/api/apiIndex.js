@@ -27,7 +27,7 @@ export const signin = (formData) => API.post('/user/signin/', formData)
 export const socialAuth = (data) => API.post('/user/socialAuth/', data)
 export const logout = (userId) => API.post(`/user/logout?userId=${userId}` )
 
-
+export const getNotifications = () => API.get('/user/notifications/')
 export const getUsers = (page) => API.get(`/user/users?page=${page}`)
 export const follow = (data) => API.post('/user/follow/', data)
 export const getFollowing = () => API.get('/user/following')

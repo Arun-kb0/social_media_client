@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Stack, Fab, Tooltip, Container, Box } from '@mui/material'
 import LeftSidebar from '../leftSidebar/LeftSidebar'
 import RightSidebar from '../rightSidebar/RightSidebar'
@@ -8,12 +8,15 @@ import AddIcon from '@mui/icons-material/Add';
 import { grey } from '@mui/material/colors'
 import { useNavigate } from 'react-router-dom'
 import FindPeople from '../people/FindPeople'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Following from '../people/Following'
+import { socketConnect, socketDisConnect } from '../../redux/features/socketio/socketioActions'
 
 const Home = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const { isFindPeopleOpen, isPostsOpen,isFollowOpen } = useSelector(state => state.buttonToggle)
+
 
     return (
         <Box

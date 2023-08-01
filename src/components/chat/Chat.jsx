@@ -10,6 +10,7 @@ import Message from './Message';
 import { useSelector, useDispatch } from 'react-redux'
 import {  reciveMessage, sendMessage } from '../../redux/features/chat/chatActions';
 import ChatUsers from './ChatUsers';
+import { REMOVE_MSG_NOTIFICATIONS_SUCCESS } from '../../constants/actionTypes';
 
 
 const Chat = () => {
@@ -32,6 +33,10 @@ const Chat = () => {
             chatContainerRef?.current?.scrollIntoView({ behavior: "smooth" });
         }, [100])
     }, [messages?.length])
+
+    useEffect(()=>{
+        dispatch({ type: REMOVE_MSG_NOTIFICATIONS_SUCCESS, payload: null })
+    },[])
 
     const handleSendMessage = () => {
         console.log(messageInput.length)
@@ -141,7 +146,7 @@ const Messages = ({ messages, userId, chatContainerRef }) => (
     >
         {messages?.map((message) => (
             <Message
-                key={message.id}
+                key={message._id}
                 authorName={message.authorName}
                 authorId={message.authorId}
                 message={message.message}

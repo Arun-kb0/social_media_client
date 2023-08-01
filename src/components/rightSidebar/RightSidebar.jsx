@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Avatar, AvatarGroup, Box, ImageList, ListItem, ListItemAvatar,
   ListItemText, Typography, Divider, List
@@ -8,12 +8,23 @@ import { grey } from '@mui/material/colors'
 import { StyledBox, StyledInnerBox, StyledTypography } from './styles'
 
 import propic from '../../images/propic.jpg'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import ChatListItem from '../chat/ChatListItem'
+import { getChatUsers } from '../../redux/features/chat/chatActions'
 
 
 const RightSidebar = () => {
-  const {} = useSelector(state=> state.user)
-  
+  const dispatch = useDispatch()
+  const [isCanceled, setsetIsCanceled] = useState(false)
+
+  const { onlineUsers, chatUsers } = useSelector(state => state.chat)
+  const { socket } = useSelector(state => state.socketioReducer)
+  const { userId } = useSelector(state => state.auth)
+
+  useEffect(() => {
+    dispatch(getChatUsers())
+  }, [userId])
+
   return (
     <Box
       borderRadius={1}
@@ -24,53 +35,43 @@ const RightSidebar = () => {
       sx={{ display: { xs: 'none', sm: 'flex' } }}
     >
       <StyledInnerBox>
+
+        <StyledTypography variant='h6' >
+          Online friends
+        </StyledTypography>
         <StyledBox  >
-          <StyledTypography variant='h6' >
-            Online friends
-          </StyledTypography>
-          <AvatarGroup sx={{ display: 'flex', justifyContent: 'center', }} max={5}>
-            <Avatar alt="person1" src={propic} />
-            <Avatar alt="person1" src={propic} />
-            <Avatar alt="person1" src={propic} />
-            <Avatar alt="person1" src={propic} />
-            <Avatar alt="person1" src={propic} />
-            <Avatar alt="person1" src={propic} />
-            <Avatar alt="person1" src={propic} />
-            <Avatar alt="person1" src={propic} />
-          </AvatarGroup>
+          {onlineUsers?.map((user) => (
+            <ChatListItem
+              key={user.userId}
+              socket={socket}
+              name={user.name}
+              photo={user.photo}
+              id={user.userId}
+              lastMessage={user?.lastMessage ? user.lastMessage : ''}
+              isOnline={user.isOnline}
+            />
+          ))}
         </StyledBox>
 
 
+        <StyledTypography variant='h6'  >
+          Chat
+        </StyledTypography>
         <StyledBox>
-          <StyledTypography variant='h6'  >
-            Latest Conversations
-          </StyledTypography>
-
-        <Box sx={{display:'flex' , justifyContent:'center' }}>
-          <List sx={{ width: '100%', maxWidth: 400, bgcolor: grey[100] }}  >
-            <ListItem  >
-              <ListItemAvatar><Avatar src={propic} alt={"name"} /> </ListItemAvatar>
-              <ListItemText
-                primary="Summer BBQ"
-                secondary={
-                  <React.Fragment>
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="body2"
-                      color="text.primary"
-                    >
-                      to Scott, Alex, Jennifer
-                    </Typography>
-                    {" — Wish I could come, but I'm out of town this…"}
-                  </React.Fragment>
-                }
+          <Box pt={5}>
+            {chatUsers?.map((user) => (
+              <ChatListItem
+                key={user.userId}
+                socket={socket}
+                name={user.name}
+                photo={user.photo}
+                id={user.userId}
+                lastMessage={user?.lastMessage ? user.lastMessage : ''}
+                isOnline={user.isOnline}
               />
+            ))}
 
-            </ListItem>
-            <Divider variant="inset" component="li" />
-          </List>
-        </Box>
+          </Box>
 
         </StyledBox>
 

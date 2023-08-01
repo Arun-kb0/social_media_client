@@ -4,7 +4,7 @@ import { StyledPostsBox } from '../posts/styles'
 import { Waypoint } from 'react-waypoint'
 import { useDispatch, useSelector } from 'react-redux'
 import { Box } from '@mui/material'
-import { getUsers } from '../../redux/features/user/userActions'
+import { getFollowing, getUsers } from '../../redux/features/user/userActions'
 
 const FindPeople = () => {
     const [page, setPage] = useState(1)
@@ -15,11 +15,11 @@ const FindPeople = () => {
     useEffect(() => {
         if (!isCancelled) {
             console.log('FindPeople getusers called ' + page)
+            dispatch(getFollowing())
             dispatch(getUsers(page))
+
         }
     }, [page])
-
-
 
 
     const handlePage = () => {
@@ -29,17 +29,18 @@ const FindPeople = () => {
         } else {
             setIsCancelled(true)
         }
+        console.log("findPeople page ",page)
     }
 
     return (
         <StyledPostsBox >
             {users.map((user, index) => (
                 <Fragment key={user.id}>
-                    <Person
+                    {<Person
                         btn1={'follow'} btn2={'remove'}
                         user={user}
-                    />
-                    {index === users.length - 4 &&
+                    />}
+                    {index === users.length - 2 &&
                         <Waypoint onPositionChange={handlePage} />
                     }
                 </Fragment>

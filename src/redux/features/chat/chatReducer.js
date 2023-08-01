@@ -11,6 +11,7 @@ const initialState = {
     roomId: null,
     chatUser: null,
     chatUsers: [],
+    onlineUsers:null,
     loading: false,
     error: ''
 
@@ -28,7 +29,8 @@ const chatReducer = (state = initialState, action) => {
         case GET_CHAT_USERS_SUCCESS:
             return {
                 ...state,
-                chatUsers: action.payload,
+                chatUsers: action.payload.updatedList,
+                onlineUsers:action.payload.onlineUsers,
                 loading: false
             }
         case GET_CHAT_USERS_FAILED:

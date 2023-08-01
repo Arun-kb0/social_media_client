@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
-  AppBar, Typography, Avatar, MenuItem, Menu, Fade, Box, Button, MenuList, Paper,
+  AppBar, Typography, Avatar, MenuItem, Menu, Fade, Box, Button, MenuList, Paper, Popper, List, ListItem, fabClasses, Stack,
 } from '@mui/material'
 import {
   Search, StyledToolbar, Icons, UserBox, SearchIconWrapper,
-  StyledInputBase, StyledIconButton
+  StyledInputBase, StyledIconButton, StyledStack, StyledPaper
 } from './styles';
 import { blueGrey } from '@mui/material/colors';
 
@@ -22,9 +22,11 @@ import MobileMenu from './MobileMenu';
 import NavIcon from './NavIcon';
 import { useDispatch, useSelector } from 'react-redux';
 import { corsOptions } from '../../../../server/config/corsOptions';
-import { getAllNotifications,ReciveNotifications } from '../../redux/features/user/userActions';
+import { getAllNotifications, ReciveNotifications, removeAllNotifications, removeNotification } from '../../redux/features/user/userActions';
 
-
+import * as Relam from 'realm-web'
+import { mongodbRelemConnect, searchPost } from '../../redux/features/post/postActions';
+import { SET_SEARCH_OPEN } from '../../constants/actionTypes';
 
 const Navbar = () => {
   const dispatch = useDispatch()
@@ -32,13 +34,18 @@ const Navbar = () => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
+  const [searchInput, setSearchInput] = useState('')
+  const [autoComplete, setAutoComplete] = useState([])
+
   const [notificationMenuOpen, setNotificationMenuOpen] = useState(false)
+  const [autoCompleteOpen, setAutoCompleteOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
 
 
   const { isOnline, photo } = useSelector(state => state.auth)
   const { socket } = useSelector(state => state.socketioReducer)
   const { notification } = useSelector(state => state.user)
+  const { mongodbRelam ,searchResult} = useSelector(state => state.post)
 
 
   const handleDrawer = () => {
@@ -46,9 +53,11 @@ const Navbar = () => {
     localStorage.setItem("drawerOpen", drawerOpen)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getAllNotifications())
-  },[])
+    dispatch(mongodbRelemConnect())
+
+  }, [])
 
 
   useEffect(() => {
@@ -59,7 +68,49 @@ const Navbar = () => {
   }, [socket])
 
 
-  const handleClick = (type, e) => {
+  // // ! relem code 
+  // useEffect(() => {
+
+  //   const invokeRelam = async () => {
+  //     const RELAM_APP_ID = "socialmedia-racyh"
+  //     const app = new Relam.App({ id: RELAM_APP_ID })
+  //     const credentials = Relam.Credentials.anonymous()
+
+  //     try {
+  //       const user = await app.logIn(credentials)
+  //       const testPost = await user.functions.getPostTest()
+  //       console.warn("relam")
+  //       console.log(testPost)
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+
+  //   invokeRelam()
+
+  // }, [])
+
+  useEffect(() => {
+    const search = async () => {
+      try {
+        const searchAutoComplete = await mongodbRelam?.functions.searchAutoComplete(searchInput)
+        console.warn("relam")
+        console.log(searchAutoComplete)
+        setAutoComplete(() => searchAutoComplete)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    if (searchInput.length)
+      search()
+    else
+      setAutoComplete([])
+  }, [searchInput])
+
+
+
+  const handleClick = (type, e, data) => {
     switch (type) {
       case 'noti':
         setAnchorEl(e.currentTarget);
@@ -69,12 +120,40 @@ const Navbar = () => {
         setAnchorEl(e.currentTarget)
         setOpen(true)
         return
+      case 'clearAllNoti':
+        dispatch(removeAllNotifications())
+        return
+      case 'clearNoti':
+        console.log(data)
+        dispatch(removeNotification(data._id, 'liked'))
+        return
+
+      // * search
+      case 'search':
+        if (searchInput.length > 0) {
+          console.log(searchInput)
+          // relamSearch()
+          dispatch(searchPost(searchInput))
+          dispatch({type: SET_SEARCH_OPEN , payload:true})
+          setSearchInput('')
+          setAutoCompleteOpen(false)
+        }
+        return
+
+      case 'autoComp':
+        setAutoCompleteOpen(true)
+        setAnchorEl(e.currentTarget)
+        return
+
+      case 'changeVal':
+        console.log(data)
+        setSearchInput(data)
+        return
+
 
       default:
         return;
     }
-    // setAnchorEl(e.currentTarget);
-    // setNotificationMenuOpen(true)
   };
 
   const handleClose = (type) => {
@@ -87,12 +166,31 @@ const Navbar = () => {
         setOpen(false)
         setAnchorEl(null)
         return
+      case 'autoComp':
+        setAutoCompleteOpen(false)
+        return
 
       default:
         return;
     }
 
   };
+
+
+  const handleKey = (e) => {
+    if (e.key === 'Enter')
+      handleClick('search')
+  }
+
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value)
+    if (e.target.value.length > 0) {
+      setAutoCompleteOpen(true)
+    } else {
+      setAutoCompleteOpen(false)
+    }
+    console.log("autoCompleteOpen", autoCompleteOpen)
+  }
 
 
 
@@ -120,8 +218,6 @@ const Navbar = () => {
             <Typography
               variant='h6'
               color={blueGrey[700]}
-              // noWrap
-              // component="div"
               sx={{ display: { xs: 'none', sm: 'block' } }}
             >
               Social Media
@@ -129,19 +225,35 @@ const Navbar = () => {
             <InterestsIcon sx={{ display: { xs: 'block', sm: 'none' }, padding: '15px', color: blueGrey[50] }} />
           </Button>
 
-          <Search>
+          <Search >
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
-            <StyledInputBase placeholder='Search...' />
+
+            <StyledInputBase
+              placeholder='Search...'
+              onChange={handleInputChange}
+              onKeyDown={handleKey}
+              value={searchInput}
+            />
           </Search>
+          {autoCompleteOpen &&
+            <AutoComplete
+              handleClick={handleClick}
+              autoComplete={autoComplete}
+            />
+          }
+
+
+
+
+
 
           <Icons>
             <NavIcon icon={<MailIcon />} badgeContent={4} />
             <NavIcon
               icon={
                 <NotificationsIcon
-                  // onClick={() => setNotificationMenuOpen(prev => !prev)}
                   onClick={(e) => handleClick('noti', e)}
                 />
               }
@@ -151,7 +263,6 @@ const Navbar = () => {
               <Avatar
                 src={photo ? photo : ''}
                 sx={{ width: 30, height: 30 }}
-                // onClick={() => { setOpen(prev => !prev) }}
                 onClick={(e) => handleClick('more', e)}
               />}
               badgeContent={''}
@@ -197,12 +308,12 @@ const Navbar = () => {
         />
 
       </AppBar>
-    </Box>
+    </Box >
   )
 }
 
 
-const NotificationMenu = ({ open, notification, anchorEl, handleClose }) => {
+const NotificationMenu = ({ open, notification, anchorEl, handleClose, handleClick }) => {
 
   return (
     <Menu
@@ -210,8 +321,8 @@ const NotificationMenu = ({ open, notification, anchorEl, handleClose }) => {
       MenuListProps={{ 'aria-labelledby': 'fade-button', }}
       PaperProps={{
         style: {
-          maxHeight: 200,
-          // width: '35ch',
+          maxHeight: 400,
+          width: '30ch',
         },
       }}
 
@@ -224,17 +335,51 @@ const NotificationMenu = ({ open, notification, anchorEl, handleClose }) => {
       marginThreshold={62}
     >
 
-      {notification && <Button variant='contained' size='small'sx={{marginLeft:1}}>Clear</Button>}
+      {notification &&
+        <Button variant='contained' size='small' sx={{ marginLeft: 1 }}
+          onClick={() => handleClick('clearAllNoti')}
+        >
+          Clear
+        </Button>
+      }
       {notification
         ? notification.map((data) => (
-          <MenuItem key={data._id}>
-            {`${data.likedUserName} ${data.actionType} your post`}
+          <MenuItem key={data._id} onClick={(e) => handleClick('clearNoti', e, data)}>
+            {data?.actionType === 'liked'
+              ? `${data.likedUserName} ${data?.actionType} your post`
+              : `${data.likedUserName} ${data?.actionType} on your post`
+            }
+
           </MenuItem>
         ))
         : <MenuItem>No new notifications</MenuItem>
       }
 
     </Menu>
+
+  )
+}
+
+
+
+const AutoComplete = ({ handleClick, autoComplete }) => {
+
+  return (
+
+    <StyledStack direction={'row'} spacing={2} >
+      <StyledPaper>
+        <MenuList >
+          {autoComplete?.map(data => (
+            <MenuItem
+              onClick={(e) => handleClick('changeVal', e, data.title)}
+            >
+              {data.title}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </StyledPaper>
+    </StyledStack>
+
 
   )
 }

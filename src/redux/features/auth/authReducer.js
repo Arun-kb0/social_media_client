@@ -1,6 +1,6 @@
 import {
-    AUTH, LOCALSTORAGE_USER, 
-    LOGOUT_START, LOGOUT_SUCCESS, LOGOUT_FAILED,
+    AUTH, LOCALSTORAGE_USER,
+    LOGOUT_START, LOGOUT_SUCCESS, LOGOUT_FAILED, AUTH_SUCCESS, AUTH_START, AUTH_FAILED,
 } from '../../../constants/actionTypes'
 
 
@@ -25,7 +25,12 @@ const initialState = {
 
 const authReducer = (state = initialState, action) => {
     switch (action.type) {
-        case AUTH:
+        case AUTH_START:
+            return {
+                ...state,
+                loading: true
+            }
+        case AUTH_SUCCESS:
             console.log('auth reducer')
             console.warn(action.payload)
             localStorage.setItem('profile', JSON.stringify({ ...action.payload }))
@@ -37,8 +42,14 @@ const authReducer = (state = initialState, action) => {
                 email: action.payload?.result?.email,
                 photo: action.payload?.result?.picture,
                 isOnline: action.payload?.result?.isOnline,
+                loading: false
             }
-
+        case AUTH_FAILED:
+            return {
+                ...state,
+                error:action.payload,
+                loading: false
+            }
 
 
         case LOCALSTORAGE_USER:
@@ -56,7 +67,7 @@ const authReducer = (state = initialState, action) => {
             localStorage.clear('profile')
             return {
                 ...state,
-                loading:true
+                loading: true
             }
         case LOGOUT_SUCCESS:
             localStorage.clear('profile')
@@ -64,8 +75,8 @@ const authReducer = (state = initialState, action) => {
         case LOGOUT_FAILED:
             return {
                 ...state,
-                error:action.payload,
-                loading:false
+                error: action.payload,
+                loading: false
             }
 
 

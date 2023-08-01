@@ -1,15 +1,21 @@
 import {
     GET_USERS_START, GET_USERS_SUCCESS, GET_USERS_FAILED,
-    FOLLOW_START, FOLLOW_FAILED, FOLLOW_SUCCESS, GET_FOLLOWING_FAILED, GET_FOLLOWING_START, GET_FOLLOWING_SUCCESS, GET_NOTIFICATIONS_START, GET_NOTIFICATIONS_SUCCESS, GET_NOTIFICATIONS_FAILED, RECIVE_NOTIFICATION_START, RECIVE_NOTIFICATION_SUCCESS, RECIVE_NOTIFICATION_FAILED
+    FOLLOW_START, FOLLOW_FAILED, FOLLOW_SUCCESS, GET_FOLLOWING_FAILED, GET_FOLLOWING_START, GET_FOLLOWING_SUCCESS, GET_NOTIFICATIONS_START, GET_NOTIFICATIONS_SUCCESS, GET_NOTIFICATIONS_FAILED, RECIVE_NOTIFICATION_START, RECIVE_NOTIFICATION_SUCCESS, RECIVE_NOTIFICATION_FAILED, REMOVE_ALL_NOTIFICATIONS_START, REMOVE_ALL_NOTIFICATIONS_SUCCESS, REMOVE_ALL_NOTIFICATIONS_FAILED, GET_MSG_NOTIFICATIONS_SUCCESS, REMOVE_NOTIFICATION_START, REMOVE_NOTIFICATION_SUCCESS, REMOVE_MSG_NOTIFICATIONS_SUCCESS, UNFOLLOW_START, UNFOLLOW_SUCCESS, UNFOLLOW_FAILED
 } from '../../../constants/actionTypes'
 import * as api from '../../../api/apiIndex'
 
 
-export const getUsers = (page) => async (dispatch) => {
+export const getUsers = (page) => async (dispatch, getState) => {
     dispatch({ type: GET_USERS_START })
+    const { userId } = getState().auth
+    const { following } = getState().user
+    console.log("userId", userId)
     try {
         const { data } = await api.getUsers(page)
         console.log(data)
+        const followingUserIds = following?.map(user => user.id)
+        const filteredData = data.users?.filter((user) => !followingUserIds?.includes(user.id) && user.id !== userId)
+        data.users = filteredData
         dispatch({ type: GET_USERS_SUCCESS, payload: data })
     } catch (error) {
         console.log(error)
@@ -30,6 +36,20 @@ export const follow = (followData) => async (dispatch) => {
     }
 }
 
+export const unFollow = (followingId) => async (dispatch) => {
+    dispatch({ type: UNFOLLOW_START })
+    try {
+        const data = await api.unfollow(followingId)
+        console.log(data)
+        if (data.status === 200)
+            dispatch({ type: UNFOLLOW_SUCCESS, payload: followingId })
+        else
+            throw new Error(data.error)
+    } catch (error) {
+        console.log(error)
+        dispatch({ type: UNFOLLOW_FAILED, payload: error })
+    }
+}
 
 export const getFollowing = () => async (dispacth) => {
     dispacth({ type: GET_FOLLOWING_START })
@@ -45,13 +65,12 @@ export const getFollowing = () => async (dispacth) => {
 
 
 
-
 export const getAllNotifications = () => async (dispatch,) => {
     dispatch({ type: GET_NOTIFICATIONS_START })
     try {
-        const { data:{notifications} } = await api.getNotifications()
-        // console.log(data)
-        dispatch({ type: GET_NOTIFICATIONS_SUCCESS, payload: notifications })
+        const { data: { data } } = await api.getNotifications()
+        console.log(data)
+        dispatch({ type: GET_NOTIFICATIONS_SUCCESS, payload: data })
     } catch (error) {
         console.log(error)
         dispatch({ type: GET_NOTIFICATIONS_FAILED, payload: error })
@@ -61,14 +80,26 @@ export const getAllNotifications = () => async (dispatch,) => {
 
 
 
-
 export const ReciveNotifications = () => (dispatch, getState) => {
     dispatch({ type: RECIVE_NOTIFICATION_START })
     const { socket } = getState().socketioReducer
 
     const onHandleNotification = (data) => {
+
         console.log(data)
-        dispatch({ type: RECIVE_NOTIFICATION_SUCCESS, payload: data?.newNotification })
+        if (data?.newNotification?.newMessageNotification?.actionType === 'message') {
+            const { newNotification: { newMessageNotification, totalMessageCount } } = data
+
+            dispatch({
+                type: GET_MSG_NOTIFICATIONS_SUCCESS,
+                payload: {
+                    newMessageNotification,
+                    totalMessageCount
+                }
+            })
+        } else {
+            dispatch({ type: RECIVE_NOTIFICATION_SUCCESS, payload: data?.newNotification })
+        }
         console.log("postLikeNotification on")
     }
 
@@ -83,6 +114,30 @@ export const ReciveNotifications = () => (dispatch, getState) => {
     return () => {
         console.log("postLikeNotification off")
         socket?.off("getNotification", onHandleNotification)
+    }
+}
+
+
+export const removeAllNotifications = () => async (dispatch, getState) => {
+    dispatch({ type: REMOVE_ALL_NOTIFICATIONS_START })
+    try {
+        const data = await api.removeAllNotifications()
+        dispatch({ type: REMOVE_ALL_NOTIFICATIONS_SUCCESS })
+    } catch (error) {
+        dispatch({ type: REMOVE_ALL_NOTIFICATIONS_FAILED, payload: error })
+    }
+}
+
+export const removeNotification = (notificationId, type) => async (dispatch) => {
+    dispatch({ type: REMOVE_NOTIFICATION_START })
+    try {
+        const data = await api.removeNotification({ notificationId, type })
+        type === 'message'
+            ? dispatch({ type: REMOVE_MSG_NOTIFICATIONS_SUCCESS, payload: notificationId })
+            : dispatch({ type: REMOVE_NOTIFICATION_SUCCESS, payload: notificationId })
+    } catch (error) {
+        console.log(error)
+        dispatch({ type: REMOVE_NOTIFICATION_START, payload: error })
     }
 }
 

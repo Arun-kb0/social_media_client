@@ -12,7 +12,6 @@ import { getLocalStroageUser } from './redux/features/auth/authActions'
 import EditPost from './components/createPost/EditPost'
 import UserProfile from './components/userProfile/UserProfile'
 import Chat from './components/chat/Chat'
-import io from 'socket.io-client'
 import { socketConnect, socketDisConnect } from './redux/features/socketio/socketioActions'
 
 const App = () => {

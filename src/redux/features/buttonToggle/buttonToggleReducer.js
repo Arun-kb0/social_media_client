@@ -1,12 +1,14 @@
 import {
     SET_FIND_PEOPLE_OPEN, SET_POSTS_OPEN,
-    SET_FOLLOWING_OPEN
+    SET_FOLLOWING_OPEN,
+    SET_SEARCH_OPEN
 } from "../../../constants/actionTypes";
 
 const initialState = {
     isPostsOpen: true,
     isFindPeopleOpen: false,
     isFollowOpen: false,
+    isSearchOpen:false
 }
 
 
@@ -17,6 +19,7 @@ const buttonToggleReducer = (state = initialState, action) => {
                 ...state,
                 isPostsOpen: false,
                 isFollowOpen: false,
+                isSearchOpen:false,
                 isFindPeopleOpen: action.payload
             }
 
@@ -25,6 +28,7 @@ const buttonToggleReducer = (state = initialState, action) => {
                 ...state,
                 isFindPeopleOpen: false,
                 isFollowOpen: false,
+                isSearchOpen:false,
                 isPostsOpen: action.payload,
             }
         case SET_FOLLOWING_OPEN:
@@ -32,7 +36,16 @@ const buttonToggleReducer = (state = initialState, action) => {
                 ...state,
                 isFindPeopleOpen: false,
                 isPostsOpen: false,
+                isSearchOpen:false,
                 isFollowOpen: action.payload,
+            }
+        case SET_SEARCH_OPEN:
+            return{
+                ...state,
+                isFindPeopleOpen: false,
+                isPostsOpen: false,
+                isFollowOpen: false,
+                isSearchOpen: action.payload
             }
 
         default:

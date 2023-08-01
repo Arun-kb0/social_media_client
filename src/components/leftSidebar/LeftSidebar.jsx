@@ -23,6 +23,7 @@ const LeftSidebar = () => {
   const dispatch = useDispatch()
   const { authData } = useSelector(state => state.auth)
   const { isFindPeopleOpen, isPostsOpen, isFollowOpen } = useSelector(state => state.buttonToggle)
+  const { totalMessageCount } = useSelector(state => state.user)
 
 
   const handleClick = ({ type }) => {
@@ -62,7 +63,7 @@ const LeftSidebar = () => {
           <ListIconTemplate icon={<AddIcon sx={{ fontSize: '32px' }} />} text={'Add Post'} linkTo={'/create'} />
           <ListIconTemplate icon={<GroupIcon sx={{ fontSize: '32px', color: isFindPeopleOpen && blue[700] }} />} text={'People'} onClick={() => handleClick({ type: 'people' })} />
           <ListIconTemplate icon={<Diversity2Icon sx={{ fontSize: '32px', color: isFollowOpen && blue[700] }} />} text={'Following'} onClick={() => handleClick({ type: 'follow' })} />
-          <ListIconTemplate icon={<TextsmsIcon sx={{ fontSize: '32px' }} />} text={'Chat'} linkTo={'/chat'} />
+          <ListIconTemplate icon={<TextsmsIcon sx={{ fontSize: '32px' }} />} text={'Chat'} linkTo={'/chat'} badgeContent={totalMessageCount > 0 ? totalMessageCount : null} />
 
           <Divider variant="middle" component="li" />
 

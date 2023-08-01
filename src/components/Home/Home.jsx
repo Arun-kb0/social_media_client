@@ -11,11 +11,12 @@ import FindPeople from '../people/FindPeople'
 import { useDispatch, useSelector } from 'react-redux'
 import Following from '../people/Following'
 import { socketConnect, socketDisConnect } from '../../redux/features/socketio/socketioActions'
+import ViewSearch from '../viewSearch/ViewSearch'
 
 const Home = () => {
     const navigate = useNavigate()
-    const dispatch = useDispatch()
-    const { isFindPeopleOpen, isPostsOpen,isFollowOpen } = useSelector(state => state.buttonToggle)
+    const { isFindPeopleOpen, isPostsOpen, isFollowOpen, isSearchOpen } = useSelector(state => state.buttonToggle)
+    const { posts, currentPage, numberOfPages, postIds, likedPostIds } = useSelector(state => state.post)
 
 
     return (
@@ -33,9 +34,17 @@ const Home = () => {
             >
                 <LeftSidebar />
                 <Drawer />
-                {isPostsOpen && <Posts />}
+                {isPostsOpen &&
+                    <Posts
+                        posts={posts}
+                        currentPage={currentPage}
+                        numberOfPages={numberOfPages}
+                        postIds={postIds}
+                        likedPostIds={likedPostIds}
+                    />}
+                {isSearchOpen && <ViewSearch />}
                 {isFindPeopleOpen && <FindPeople />}
-                {isFollowOpen && <Following/>}
+                {isFollowOpen && <Following />}
                 <RightSidebar />
 
 

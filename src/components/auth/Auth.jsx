@@ -1,20 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Container, Typography, InputAdornment, IconButton, FormControl,
   TextField, Box, Button, OutlinedInput, InputLabel, FormHelperText
 
 } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
+
 import Person from '@mui/icons-material/Person';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import { GoogleLoginButton } from "react-social-login-buttons";
 import { LoginSocialGoogle } from "reactjs-social-login";
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import { StyledPaper, StyledAvatar, StyledForm, StyledBox } from './styles';
 import { signIn, signUp, socialAuth } from '../../redux/features/auth/authActions';
 import { getFollowing } from '../../redux/features/user/userActions';
+import Notification from '../notification/Notification';
 
 
 const Auth = () => {
@@ -41,6 +44,8 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [inputerror, setInputerror] = useState(initialErrorState)
 
+  const { authData, loading, error } = useSelector(state => state.auth)
+
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -50,10 +55,11 @@ const Auth = () => {
 
     if (!isError) {
       // console.log(formData)
+      console.log("loading", loading)
       isSignUp
         ? dispatch(signUp(formData))
         : dispatch(signIn(formData))
-      navigate('/')
+      //  navigate('/')
     }
   }
   const handleChange = (e) => {
@@ -100,12 +106,18 @@ const Auth = () => {
     // console.log(provider)
     // console.log(data)
     dispatch(socialAuth(provider, data))
-    navigate('/')
+    // navigate('/')
   }
 
   const googleFailed = (err) => {
     console.error(err)
   }
+
+  useEffect(() => {
+    if (authData)
+      navigate('/')
+  }, [authData])
+
 
 
   return (
@@ -206,7 +218,8 @@ const Auth = () => {
               )}
             </Box>
 
-            <Button
+            <LoadingButton
+              loading={loading}
               sx={{ marginBottom: 1 }}
               type='submit'
               fullWidth
@@ -214,7 +227,7 @@ const Auth = () => {
               color='primary'
             >
               {isSignUp ? 'Sign Up' : 'Sign In'}
-            </Button >
+            </LoadingButton >
 
 
             <LoginSocialGoogle
@@ -241,6 +254,11 @@ const Auth = () => {
           </StyledForm>
 
         </StyledPaper>
+
+        <Notification
+          message={error?.message}
+          isMessage={error ? true : false}
+        />
       </Container>
     </StyledBox>
   )

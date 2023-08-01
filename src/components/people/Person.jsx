@@ -1,28 +1,54 @@
 import { Avatar, Button, Typography, Box, Badge } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import { StyledUserPaper } from './styles'
 import { useDispatch, useSelector } from 'react-redux'
-import { follow } from '../../redux/features/user/userActions'
+import { follow, unFollow } from '../../redux/features/user/userActions'
 import { deepOrange, orange } from '@mui/material/colors'
+import { useNavigate } from 'react-router-dom'
 
 
 const Person = ({ btn1, btn2, user }) => {
     const dispatch = useDispatch()
-    const { username } = useSelector(state => state.auth)
+    const navigate = useNavigate()
 
-    const handleRemove = () => {
-        // dispatch(follow())
+    const { username, photo } = useSelector(state => state.auth)
+    const [btn1State, setbtn1State] = useState(btn1)
 
+
+    const handleClick = (type) => {
+        switch (type) {
+            case 'follow':
+                console.log("follow")
+                dispatch(follow({
+                    ownerName: username,
+                    ownerPhoto: photo,
+                    followUserId: user.id,
+                    name: user.name,
+                    photo: user?.picture,
+                }))
+                setbtn1State('unfollow')
+                return;
+            case 'remove':
+                console.log("remove")
+
+                return;
+            case 'unfollow':
+                console.log("unfollow")
+                dispatch(unFollow(user.id))
+                setbtn1State('follow')
+
+                return;
+            case 'chat':
+                console.log("chat")
+                
+                navigate('/chat')
+                return;
+
+            default:
+                return;
+        }
     }
 
-    const handleFollow = () => {
-        dispatch(follow({
-            ownerName: username,
-            followUserId: user.id,
-            name: user.name,
-            photo: user?.picture,
-        }))
-    }
     return (
         <StyledUserPaper elevation={6}>
             <Box sx={{ width: "27%" }}>
@@ -32,7 +58,7 @@ const Person = ({ btn1, btn2, user }) => {
                             <Avatar src={user.picture} alt='' sx={{ width: 75, height: 75 }} />
                         </Badge>
                     ) : (
-                        <Badge badgeContent='' color='success' overlap="circular"  invisible={user.isOnline ? false : true}  >
+                        <Badge badgeContent='' color='success' overlap="circular" invisible={user.isOnline ? false : true}  >
                             <Avatar src='' alt='' sx={{ width: 75, height: 75, bgcolor: orange[800] }} >
                                 <Typography variant='h4' >{user.name[0]}</Typography>
                             </Avatar>
@@ -46,14 +72,14 @@ const Person = ({ btn1, btn2, user }) => {
                 <Button
                     variant='contained'
                     sx={{ marginRight: 1 }}
-                    onClick={handleFollow}
+                    onClick={() => handleClick(btn1State)}
                 >
-                    {btn1}
+                    {btn1State}
                 </Button>
                 <Button
                     variant='contained'
                     sx={{ marginRight: 1 }}
-                    onClick={handleRemove}
+                    onClick={() => handleClick(btn2)}
                 >
                     {btn2}
                 </Button>

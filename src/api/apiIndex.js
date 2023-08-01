@@ -18,8 +18,10 @@ export const getLikePost = (postIds) => API.post('/posts/getliked', { postIds })
 
 export const getUserPosted = () => API.get('/posts/userposts')
 
+export const deleteComment = (data) => API.post('/posts/deleteComment', data)
 export const commentPost = (comment) => API.post('/posts/comment', comment)
 export const getComments = (postId) => API.get(`/posts/comment?postId=${postId}`)
+
 
 
 export const signup = (formData) => API.post('/user/signup/', formData)
@@ -28,7 +30,11 @@ export const socialAuth = (data) => API.post('/user/socialAuth/', data)
 export const logout = (userId) => API.post(`/user/logout?userId=${userId}` )
 
 export const getNotifications = () => API.get('/user/notifications/')
+export const removeAllNotifications = ()=> API.patch('/user/notifications/')
+export const removeNotification = (data)=> API.patch(`/user/RemoveNotification/`,data)
+
 export const getUsers = (page) => API.get(`/user/users?page=${page}`)
+export const unfollow = (followingId) => API.patch(`/user/unfollow?followingId=${followingId}`)
 export const follow = (data) => API.post('/user/follow/', data)
 export const getFollowing = () => API.get('/user/following')
 

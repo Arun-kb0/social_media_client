@@ -27,7 +27,7 @@ export const StyledCard = styled(Card)(({ theme }) => ({
     marginBottom: 20,
     [theme.breakpoints.up('lg')]: {
         height: 'auto',
-        width: '75vh'
+        width: '85vh'
     },
     [theme.breakpoints.only('md')]: {
         height: 'auto',
@@ -57,9 +57,17 @@ export const StyledScrollToBottom = styled(ScrollToBottom)(({ theme }) => ({
     paddingBottom: 2,
     maxHeight: '200px',
     overflowY: 'scroll'
-    
+
 }))
 
 
+
+
+export const StyledCommentText = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    marginBottom: 1,
+    alignItems: 'center',
+    justifyContent: 'left'
+}))
 
 

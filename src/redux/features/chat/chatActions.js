@@ -13,7 +13,7 @@ import { useEffect } from "react"
 
 export const createRoom = ({ socket, id, name, photo }) => async (dispatch, getState) => {
     dispatch({ type: CREATE_CHAT_START })
-    const { userId } = getState().auth
+    const { userId, username, photo: currentUserPhoto } = getState().auth
     console.log(userId, id, socket)
 
     try {
@@ -26,6 +26,8 @@ export const createRoom = ({ socket, id, name, photo }) => async (dispatch, getS
         const data = {
             roomId,
             currentUserId: userId,
+            currentUsername: username,
+            currentUserPhoto,
             chatUserId: id,
             chatUserName: name,
             chatUserPhoto: photo
@@ -49,7 +51,7 @@ export const createRoom = ({ socket, id, name, photo }) => async (dispatch, getS
 
 export const sendMessage = ({ socket, id, messageInput }) => (dispatch, getState) => {
     dispatch({ type: SEND_MESSAGE_START })
-    const { roomId } = getState().chat
+    const { roomId, chatUser } = getState().chat
     const { username, userId } = getState().auth
     try {
         const id = uuid()
@@ -62,6 +64,16 @@ export const sendMessage = ({ socket, id, messageInput }) => (dispatch, getState
             createdAt: new Date()
         }
         socket?.emit("send_message", messageData)
+        socket?.emit("sendNotification",
+            {
+                username: username,
+                creatorId: chatUser.id,
+                type: 'message',
+            },
+            () => {
+
+            }
+        )
         dispatch({ type: SEND_MESSAGE_SUCCESS, payload: messageData })
     } catch (error) {
         console.log(error)
@@ -71,10 +83,10 @@ export const sendMessage = ({ socket, id, messageInput }) => (dispatch, getState
 }
 
 
-export const reciveMessage = ( {socket} ) => (dispatch, getState) => {
+export const reciveMessage = ({ socket }) => (dispatch, getState) => {
 
     dispatch({ type: RECIVE_MESSAGE_START })
-        console.log(socket)
+    console.log(socket)
 
     const reciveMessageHandler = (data) => {
         // console.log(data)
@@ -100,19 +112,34 @@ export const reciveMessage = ( {socket} ) => (dispatch, getState) => {
 
 export const getChatUsers = () => async (dispatch, getState) => {
     dispatch({ type: GET_CHAT_USERS_START })
+    const { userId } = getState().auth
 
     try {
         const { data: { following } } = await api.getFollowing()
         const { data: { chatUsers } } = await api.getChatUsers()
-        const lastMessageAddedList = following.map((user, i) => {
-            const chatUser = chatUsers?.find(chatUser => chatUser.v.user.userId === user.id)
-            if (chatUser) {
-                return { ...user, lastMessage: chatUser.v.lastMessage }
-            } else
-                return user
+
+        console.log("chatUsers", chatUsers)
+        console.log("following", following)
+
+        const updatedList = chatUsers?.map(chatUser => {
+            const user = following?.find(user => chatUser.v.user.userId === user.id)
+            if (user) {
+                return {
+                    ...chatUser.v.user,
+                    lastMessage: chatUser.v.lastMessage,
+                    isOnline: user.isOnline
+                }
+            } else {
+                return {
+                    ...chatUser.v.user,
+                    lastMessage: chatUser.v.lastMessage,
+                }
+            }
         })
 
-        dispatch({ type: GET_CHAT_USERS_SUCCESS, payload: lastMessageAddedList })
+        const onlineUsers = updatedList?.filter(user => user.isOnline === true && user.userId !== userId)
+
+        dispatch({ type: GET_CHAT_USERS_SUCCESS, payload: { updatedList, onlineUsers } })
     } catch (error) {
         console.log(error)
         dispatch({ type: GET_CHAT_USERS_FAILED, payload: error })
@@ -133,11 +160,6 @@ export const getMessages = ({ id }) => async (dispatch, getState) => {
 
         const { data: { data } } = await api.getMessages(roomId)
         console.log(data)
-        // let messages
-        // if (data) {
-        //     messages = { [data?.roomId]: data?.messages }
-        //     console.log(messages)
-        // }
 
         dispatch({ type: GET_MESSAGES_SUCCESS, payload: data?.messages })
     } catch (error) {

@@ -1,3 +1,4 @@
+import { loadingButtonClasses } from "@mui/lab";
 import {
     GET_POST,
     DELETE_POST_FAILED, DELETE_POST_SUCCESS, DELETE_POST_START,
@@ -7,10 +8,11 @@ import {
     COMMENT_START, COMMENT_SUCCESS, COMMENT_FAILED,
     GET_COMMENT_START, GET_COMMENT_SUCCESS, GET_COMMENT_FAILED,
     CREATE_POST_START, CREATE_POST_SUCCESS, CREATE_POST_FAILED,
-    GET_USER_POST_START, GET_USER_POST_SUCCESS, GET_USER_POST_FAILED
+    GET_USER_POST_START, GET_USER_POST_SUCCESS, GET_USER_POST_FAILED, RELAM_CONNECT_START, RELAM_CONNECT_SUCCESS, RELAM_CONNECT_FAILED, GET_SEARCH_START, GET_SEARCH_SUCCESS, GET_SEARCH_FAILED, DELETE_COMMENT_START, DELETE_COMMENT_SUCCESS, DELETE_COMMENT_FAILED
 
 
 } from "../../../constants/actionTypes";
+import { flushSync } from "react-dom";
 
 const initialState = {
     posts: [],
@@ -25,7 +27,10 @@ const initialState = {
     message: null,
     isMessage: false,
 
-    isNotificationSend: false
+    isNotificationSend: false,
+
+    mongodbRelam: null,
+    searchResult: null,
 }
 
 const postReducer = (state = initialState, action) => {
@@ -162,7 +167,9 @@ const postReducer = (state = initialState, action) => {
             }
         case COMMENT_SUCCESS:
             const { commentedPostId, comment } = action.payload
-            const updatedComments = [comment, ...state?.postComments[commentedPostId]]
+            const updatedComments = state.postComments
+                ? [comment, ...state?.postComments[commentedPostId]]
+                : [comment]
 
             return {
                 ...state,
@@ -192,11 +199,33 @@ const postReducer = (state = initialState, action) => {
         case GET_COMMENT_SUCCESS:
             return {
                 ...state,
-                postComments: { ...state.postComments, ...action.payload },
+                postComments: { ...state?.postComments, ...action.payload },
+                loading: false
+            }
+        case GET_COMMENT_FAILED:
+            return {
+                ...state,
+                error: action.payload,
                 loading: false
             }
 
-        case GET_COMMENT_FAILED:
+
+        case DELETE_COMMENT_START:
+            return {
+                ...state,
+                loading: true
+            }
+        case DELETE_COMMENT_SUCCESS:
+            const {deletedCommentPostId , commentId} = action.payload
+            const filteredComments = state?.postComments[deletedCommentPostId]
+                .filter(comment => comment._id !== commentId)
+            return {
+                ...state,
+                postComments:{...state.postComments ,
+                    [deletedCommentPostId]:filteredComments },
+                    loading: false
+            }
+        case DELETE_COMMENT_FAILED:
             return {
                 ...state,
                 error: action.payload,
@@ -218,6 +247,42 @@ const postReducer = (state = initialState, action) => {
         case GET_USER_POST_FAILED:
             return {
                 ...state,
+                loading: false
+            }
+
+        case RELAM_CONNECT_START:
+            return {
+                ...state,
+                loading: true
+            }
+        case RELAM_CONNECT_SUCCESS:
+            return {
+                ...state,
+                mongodbRelam: action.payload,
+                loading: false
+            }
+        case RELAM_CONNECT_FAILED:
+            return {
+                ...state,
+                error: action.payload,
+                loading: false
+            }
+
+        case GET_SEARCH_START:
+            return {
+                ...state,
+                loading: true
+            }
+        case GET_SEARCH_SUCCESS:
+            return {
+                ...state,
+                searchResult: action.payload,
+                loading: false
+            }
+        case GET_SEARCH_FAILED:
+            return {
+                ...state,
+                error: action.payload,
                 loading: false
             }
 

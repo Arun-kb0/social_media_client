@@ -29,10 +29,11 @@ const ChatUsers = ({ socket }) => {
             <List sx={{}}>
                 {chatUsers?.map((user) => (
                     <ChatListItem
+                        key={user.userId}
                         socket={socket}
                         name={user.name}
                         photo={user.photo}
-                        id={user.id}
+                        id={user.userId}
                         lastMessage={user?.lastMessage ? user.lastMessage : ''}
                         isOnline={user.isOnline}
                     />

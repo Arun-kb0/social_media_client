@@ -17,15 +17,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { StyledCard } from '../styles';
-import { deletePost, getComments } from '../../../redux/features/post/postActions'
+import { deletePost, getComments, likePostListener } from '../../../redux/features/post/postActions'
 
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Comment from './Comment';
-import useDebounce from '../../../hooks/useDebounce';
 
 
-const Post = ({ post, likedPostIds, userId, username, isPostsOpen, creatorId, handleLike }) => {
+const Post = ({ post, likedPostIds, userId, username, creatorId, handleLike }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [expanded, setExpanded] = useState(false)
   const [likeState, setLikeState] = useState({
@@ -51,6 +50,7 @@ const Post = ({ post, likedPostIds, userId, username, isPostsOpen, creatorId, ha
     }
   }
 
+
   useEffect(() => {
     const bit = Boolean(likedPostIds.find(id => id === post._id))
     console.log(bit)
@@ -59,12 +59,13 @@ const Post = ({ post, likedPostIds, userId, username, isPostsOpen, creatorId, ha
 
 
 
+  
+
   return (
     <Box sx={{ alignItems: 'center' }} id='cardcontainer'>
 
       <StyledCard raised={true} >
         <CardHeader
-
           component='div'
           avatar={
             <Avatar sx={{ backgroundColor: red[500] }} aria-label="post">
@@ -103,7 +104,6 @@ const Post = ({ post, likedPostIds, userId, username, isPostsOpen, creatorId, ha
           <>
             {likeState.likeCount}
             <Checkbox
-              // onClick={handleLikeHelper}
               onClick={() => handleLike({ ...post, setLikeState })}
               checked={likeState.isLiked}
               icon={<FavoriteBorder />}
@@ -127,8 +127,10 @@ const Post = ({ post, likedPostIds, userId, username, isPostsOpen, creatorId, ha
           <Comment
             username={username}
             postId={post._id}
+            creatorId={creatorId}
             postComments={postComments}
             setcommentCount={setcommentCount}
+            
           />
         </Collapse>
 

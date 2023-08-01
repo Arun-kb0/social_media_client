@@ -1,8 +1,8 @@
-import { Divider, ListItemText, ListItemButton, ListItem } from '@mui/material'
+import { Divider, ListItemText, ListItemButton, ListItem, Badge } from '@mui/material'
 import { StyledListItemIcon } from './styles'
 import { Link } from 'react-router-dom'
 
-const ListIconTemplate = ({ icon, text, linkTo, onClick }) => (
+const ListIconTemplate = ({ icon, text, linkTo, onClick , badgeContent}) => (
   <ListItem
     component="div"
     disablePadding
@@ -13,7 +13,9 @@ const ListIconTemplate = ({ icon, text, linkTo, onClick }) => (
       sx={{ borderRadius: "15px", }}
     >
       <StyledListItemIcon component='a'   >
+        <Badge color='error' variant={badgeContent? "dot" : ''} >
         {icon}
+        </Badge>
       </StyledListItemIcon>
       <ListItemText primary={text} sx={{ px: 1 }} />
     </ListItemButton>

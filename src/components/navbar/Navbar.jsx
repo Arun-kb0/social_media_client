@@ -22,6 +22,7 @@ import {
 } from '../../imports/materialIcons';
 import { logout } from '../../redux/features/auth/authActions';
 import { clearChatState } from '../../redux/features/chat/chatActions';
+import socialMediaLogo from '../../../public/vite.svg'
 
 
 const Navbar = () => {
@@ -194,7 +195,9 @@ const Navbar = () => {
             to='/'
             sx={{ padding: '0px' }}
           >
+            <Avatar src={socialMediaLogo} />
             <Typography
+              p={1}
               variant='h6'
               color={blueGrey[700]}
               sx={{ display: { xs: 'none', sm: 'block' } }}

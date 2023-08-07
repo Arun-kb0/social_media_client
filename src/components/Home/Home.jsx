@@ -17,7 +17,6 @@ import { AddIcon } from '../../imports/materialIcons'
 
 const Home = () => {
     const navigate = useNavigate()
-    const dispatch = useDispatch()
     const { isFindPeopleOpen, isPostsOpen, isFollowOpen, isSearchOpen } = useSelector(state => state.buttonToggle)
     const { posts, currentPage, numberOfPages, postIds, likedPostIds } = useSelector(state => state.post)
     const { socket } = useSelector(state => state?.scoketioReducer || {})

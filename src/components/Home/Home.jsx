@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useNavigate, Navigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 import LeftSidebar from '../leftSidebar/LeftSidebar'
 import RightSidebar from '../rightSidebar/RightSidebar'
@@ -17,9 +17,11 @@ import { AddIcon } from '../../imports/materialIcons'
 
 const Home = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const { isFindPeopleOpen, isPostsOpen, isFollowOpen, isSearchOpen } = useSelector(state => state.buttonToggle)
     const { posts, currentPage, numberOfPages, postIds, likedPostIds } = useSelector(state => state.post)
-    const { socket } = useSelector(state => state?.scoketioReducer || {} )
+    const { socket } = useSelector(state => state?.scoketioReducer || {})
+    const { authData } = useSelector(state => state?.auth)
 
     useEffect(() => {
         const setIsOnline = (data) => {
@@ -30,6 +32,7 @@ const Home = () => {
             return () => socket.off("setIsOnline", setIsOnline)
         }
     }, [socket])
+    
 
     return (
         <Box
@@ -55,8 +58,8 @@ const Home = () => {
                         likedPostIds={likedPostIds}
                     />}
                 {isSearchOpen && <ViewSearch />}
-                {isFindPeopleOpen && <FindPeople />}
-                {isFollowOpen && <Following />}
+                {isFindPeopleOpen && (authData ? <FindPeople /> : <Navigate to='/auth'/> )}
+                {isFollowOpen && (authData ?  <Following /> : <Navigate to="/auth"/>)}
                 <RightSidebar />
 
 

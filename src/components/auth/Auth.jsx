@@ -16,6 +16,7 @@ import {
 import {
   VisibilityIcon, VisibilityOffIcon, PersonIcon
 } from '../../imports/materialIcons';
+import { SET_POSTS_OPEN } from '../../constants/actionTypes';
 
 
 const Auth = () => {
@@ -57,7 +58,6 @@ const Auth = () => {
       isSignUp
         ? dispatch(signUp(formData))
         : dispatch(signIn(formData))
-      //  navigate('/')
     }
   }
   const handleChange = (e) => {
@@ -101,10 +101,7 @@ const Auth = () => {
 
 
   const googleSuccess = async (provider, data) => {
-    // console.log(provider)
-    // console.log(data)
     dispatch(socialAuth(provider, data))
-    // navigate('/')
   }
 
   const googleFailed = (err) => {
@@ -116,7 +113,10 @@ const Auth = () => {
       navigate('/')
   }, [authData])
 
-
+  useEffect(() => {
+    if (!authData)
+      dispatch({ type: SET_POSTS_OPEN, payload: true })
+  }, [])
 
   return (
     <StyledBox >

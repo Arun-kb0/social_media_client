@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import {
-    AppBar, Typography, Badge, Avatar, MenuItem, Menu, Fade, Box,
-    IconButton, Toolbar, Select,
-} from '@mui/material'
 import propic from '../../images/propic.jpg'
-
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import NavIcon from './NavIcon';
 
+import { Avatar, MenuItem, Menu, } from '../../imports/materialuiComponents';
+import {MailIcon,NotificationsIcon} from '../../imports/materialIcons';
+ 
 
 const MobileMenu = ({ openMobileMenu, setOpenMobileMenu }) => {
     const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -22,7 +18,7 @@ const MobileMenu = ({ openMobileMenu, setOpenMobileMenu }) => {
 
 
     return (
-      
+
         <Menu
             // disableScrollLock={true}
             // anchorEl={mobileMoreAnchorEl}
@@ -40,10 +36,7 @@ const MobileMenu = ({ openMobileMenu, setOpenMobileMenu }) => {
             open={openMobileMenu}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>
-                <NavIcon icon={<MailIcon />} badgeContent={4} />
-                <p>Messages</p>
-            </MenuItem>
+           
             <MenuItem onClick={handleMenuClose}>
                 <NavIcon icon={<NotificationsIcon />} badgeContent={4} />
                 <p>Notifications</p>

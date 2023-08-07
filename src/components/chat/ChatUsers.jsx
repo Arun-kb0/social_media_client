@@ -1,14 +1,13 @@
-import { Box, List } from '@mui/material'
 import React, { useEffect } from 'react'
+
 import ChatListItem from './ChatListItem'
 import { Search, SearchIconWrapper } from '../navbar/styles'
 import { StyledChatInputBase, StyledChatUserContainer } from './styles'
-import SearchIcon from '@mui/icons-material/Search';
-import { grey } from '@mui/material/colors'
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { isCancel } from 'axios'
 import { getChatUsers } from '../../redux/features/chat/chatActions'
+
+import { Box, List, } from '../../imports/materialuiComponents'
+import { SearchIcon } from '../../imports/materialIcons'
 
 
 const ChatUsers = ({ socket }) => {

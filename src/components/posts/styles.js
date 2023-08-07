@@ -1,8 +1,10 @@
-import { CardHeader, styled } from "@mui/material";
-import { Card, Box } from '@mui/material'
-import { grey } from '@mui/material/colors';
 import ScrollToBottom from 'react-scroll-to-bottom'
 
+// import { CardHeader, styled } from "@mui/material";
+// import { Card, Box } from '@mui/material'
+// import { grey } from '@mui/material/colors';
+
+import { styled, Card, Box, grey } from '../../imports/materialuiComponents'
 
 export const StyledPostsBox = styled(Box)(({ theme }) => ({
 

@@ -1,30 +1,92 @@
-import { Avatar, Badge, Box, Button, Divider, Typography } from '@mui/material'
-import { deepOrange, grey, red } from '@mui/material/colors'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ButtonDivider, ProfileButtons, StyledBox } from './styles'
-import { getUserPosted } from '../../redux/features/post/postActions'
+
 import UserPosts from './UserPosts'
+import { getUserPosted } from '../../redux/features/post/postActions'
+import { ButtonDivider, ProfileButtons, StyledBox, StyledBoxContainer } from './styles'
+
+import { Avatar, Badge, Box, Typography, deepOrange, grey } from '../../imports/materialuiComponents'
+import { getFollowers, getFollowing } from '../../redux/features/user/userActions'
+import Following from '../people/Following'
+import Followers from '../people/Followers'
+
 
 
 const UserProfile = () => {
-    const [open, setOpen] = useState(false)
-    const { username } = useSelector(state => state.auth)
     const dispatch = useDispatch()
+    const [openComponent, setOpenComponent] = useState(false)
+    const [open, setOpen] = useState({
+        create: false,
+        followers: false,
+        following: false,
+    })
+    const { username, email } = useSelector(state => state.auth)
+    const { following, followers } = useSelector(state => state.user)
+    const { userPosts } = useSelector(state=> state.post)
 
     const handleClick = (type) => {
         switch (type) {
             case 'created':
-                !open && dispatch(getUserPosted())
-                setOpen(!open)
-                break;
-            case 'saved':
+                !open.create && dispatch(getUserPosted())
+                // open.create && setOpenComponent(!openComponent)
+                open.create
+                    ? setOpenComponent(false)
+                    : setOpenComponent(true)
+                setOpen({
+                    create: true,
+                    followers: false,
+                    following: false,
+                })
+                return;
+            case 'followers':
+                // open.followers && setOpenComponent(!openComponent)
+                open.followers
+                    ? setOpenComponent(false)
+                    : setOpenComponent(true)
+                setOpen({
+                    create: false,
+                    followers: true,
+                    following: false,
+                })
+                return;
+            case 'following':
+                open.following
+                    ? setOpenComponent(false)
+                    : setOpenComponent(true)
+                // open.following && setOpenComponent(!openComponent)
+                setOpen({
+                    create: false,
+                    followers: false,
+                    following: true,
+                })
+                return;
 
-                break;
             default:
-                break;
+                return
         }
     }
+
+
+
+    useEffect(() => {
+        if (openComponent === false) {
+            setOpen({
+                create: false,
+                followers: false,
+                following: false,
+            })
+        }
+    }, [openComponent])
+
+
+    useEffect(() => {
+        dispatch(getFollowing())
+        dispatch(getFollowers())
+        dispatch(getUserPosted())
+    }, [])
+
+
+
     return (
         <Box bgcolor={''}
             sx={{ position: 'fixed', right: 0, top: 80, left: 0 }}
@@ -32,11 +94,10 @@ const UserProfile = () => {
         >
 
             <StyledBox>
-                <Box sx={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-                    {!open &&
+                <StyledBoxContainer>
+                    {!openComponent &&
                         <>
                             <StyledBox>
-                                {/* <Avatar sizes='320' alt='img' src=''/> */}
                                 <Badge badgeContent='' color='success' overlap="circular" >
                                     <Avatar sx={{ bgcolor: deepOrange[500], height: 100, width: 100 }} >
                                         <Typography variant="h2" color="initial">{username[0]}</Typography>
@@ -53,35 +114,44 @@ const UserProfile = () => {
                             </StyledBox>
 
                             <StyledBox>
-                                <Typography variant='body1'>email</Typography>
+                                <Typography variant='body1'>{`email : ${email}`}</Typography>
                             </StyledBox>
-
-                            <StyledBox sx={{ padding: 1 }}>
-                                <Typography variant='body1'>discription</Typography>
-                            </StyledBox>
-
-                            <Box sx={{ display: 'flex', justifyContent: 'center', padding: 2 }}>
-                                <Typography variant='h6' sx={{ paddingRight: 5 }} >followers</Typography>
-                                <Typography variant='h6'>following</Typography>
-                            </Box>
                         </>
                     }
-                    
                     <StyledBox>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-evenly', paddingTop: 2, width: '70%' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-evenly', paddingTop: 2, width: '100%' }}>
                             <ProfileButtons
+                                sx={{
+                                    backgroundColor: openComponent && open.create && grey[700],
+                                    color: openComponent && open.create && grey[100],
+                                }}
                                 variant='contained'
-                                size='large'
+                                size='medium'
                                 onClick={() => { handleClick('created') }}
                             >
-                                Created
+                                {`${userPosts?.length} Created`}
                             </ProfileButtons>
                             <ProfileButtons
+                                sx={{
+                                    backgroundColor: openComponent && open.followers && grey[700],
+                                    color: openComponent && open.followers && grey[100],
+                                }}
                                 variant='contained'
-                                size='large'
-                                onClick={() => { handleClick('saved') }}
+                                size='medium'
+                                onClick={() => { handleClick('followers') }}
                             >
-                                Saved
+                                {`${followers?.length} followers`}
+                            </ProfileButtons>
+                            <ProfileButtons
+                                sx={{
+                                    backgroundColor: openComponent && open.following && grey[700],
+                                    color: openComponent && open.following && grey[100],
+                                }}
+                                variant='contained'
+                                size='medium'
+                                onClick={() => { handleClick('following') }}
+                            >
+                                {`${following?.length} following`}
                             </ProfileButtons>
                         </Box>
                     </StyledBox>
@@ -95,14 +165,28 @@ const UserProfile = () => {
                         />
                     </Box>
 
-                    {open && <StyledBox sx={{}}>
-                        <UserPosts />
-                    </StyledBox>}
-                </Box>
 
+                    {openComponent && open.create &&
+                        <StyledBox>
+                            <UserPosts />
+                        </StyledBox>
+                    }
 
-            </StyledBox>
-        </Box>
+                    {openComponent && open.followers &&
+                        <StyledBox>
+                            <Followers isReqestSend={true} />
+                        </StyledBox>
+                    }
+
+                    {openComponent && open.following &&
+                        <StyledBox>
+                            <Following isReqestSend={true} />
+                        </StyledBox>
+                    }
+
+                </StyledBoxContainer>
+            </StyledBox >
+        </Box >
     )
 }
 

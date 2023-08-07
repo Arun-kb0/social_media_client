@@ -1,23 +1,35 @@
 import React, { useEffect } from 'react'
-import { Stack, Fab, Tooltip, Container, Box } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+
 import LeftSidebar from '../leftSidebar/LeftSidebar'
 import RightSidebar from '../rightSidebar/RightSidebar'
 import Posts from '../posts/posts'
 import Drawer from '../leftSidebar/Drawer'
-import AddIcon from '@mui/icons-material/Add';
-import { grey } from '@mui/material/colors'
-import { useNavigate } from 'react-router-dom'
-import FindPeople from '../people/FindPeople'
-import { useDispatch, useSelector } from 'react-redux'
-import Following from '../people/Following'
-import { socketConnect, socketDisConnect } from '../../redux/features/socketio/socketioActions'
 import ViewSearch from '../viewSearch/ViewSearch'
+import Following from '../people/Following'
+import FindPeople from '../people/FindPeople'
+
+import { Stack, Fab, Tooltip, Box, grey } from '../../imports/materialuiComponents'
+import { AddIcon } from '../../imports/materialIcons'
+
+
 
 const Home = () => {
     const navigate = useNavigate()
     const { isFindPeopleOpen, isPostsOpen, isFollowOpen, isSearchOpen } = useSelector(state => state.buttonToggle)
     const { posts, currentPage, numberOfPages, postIds, likedPostIds } = useSelector(state => state.post)
+    const { socket } = useSelector(state => state?.scoketioReducer || {} )
 
+    useEffect(() => {
+        const setIsOnline = (data) => {
+            console.warn("socket is online", data)
+        }
+        if (socket) {
+            socket.on("setIsOnline", setIsOnline)
+            return () => socket.off("setIsOnline", setIsOnline)
+        }
+    }, [socket])
 
     return (
         <Box

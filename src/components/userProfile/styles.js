@@ -1,11 +1,18 @@
-import { Box, Button, Divider, styled } from "@mui/material";
-import { grey,red } from "@mui/material/colors";
+import { Box, Button, Divider, styled, grey, red } from '../../imports/materialuiComponents'
 
 
-
-export const StyledBox = styled(Box)(({theme})=>({
+export const StyledBox = styled(Box)(({ theme }) => ({
     display: 'flex',
-     justifyContent: 'center'
+    justifyContent: 'center'
+}))
+
+export const StyledBoxContainer = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    width: '60%',
+    [theme.breakpoints.up('xl')]: {
+        width: '40%',
+    }
 }))
 
 export const ProfileButtons = styled(Button)(({ theme }) => ({
@@ -14,14 +21,19 @@ export const ProfileButtons = styled(Button)(({ theme }) => ({
     ":hover": {
         backgroundColor: grey[500],
         color: grey[100],
+    },
+    ":active": {
+        backgroundColor: grey[700],
+        color: grey[100],
     }
 }))
 
+
 export const ButtonDivider = styled(Divider)(({ theme }) => ({
     height: '3px',
-    width: '80%',
+    width: '100%',
     backgroundColor: red[600],
-    borderRadius:'20px',
-    margin:1,
+    borderRadius: '20px',
+    margin: 1,
 }))
 

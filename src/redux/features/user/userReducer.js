@@ -1,6 +1,6 @@
 import {
     GET_USERS_START, GET_USERS_SUCCESS, GET_USERS_FAILED,
-    FOLLOW_START, FOLLOW_FAILED, FOLLOW_SUCCESS, GET_FOLLOWING_START, GET_FOLLOWING_SUCCESS, GET_NOTIFICATIONS_START, GET_NOTIFICATIONS_SUCCESS, GET_NOTIFICATIONS_FAILED, RECIVE_NOTIFICATION_SUCCESS, RECIVE_NOTIFICATION_FAILED, RECIVE_NOTIFICATION_START, REMOVE_ALL_NOTIFICATIONS_START, REMOVE_ALL_NOTIFICATIONS_SUCCESS, REMOVE_ALL_NOTIFICATIONS_FAILED, GET_MSG_NOTIFICATIONS_SUCCESS, REMOVE_NOTIFICATION_START, REMOVE_NOTIFICATION_SUCCESS, REMOVE_NOTIFICATION_FAILED, REMOVE_MSG_NOTIFICATIONS_SUCCESS, UNFOLLOW_START, UNFOLLOW_FAILED, UNFOLLOW_SUCCESS
+    FOLLOW_START, FOLLOW_FAILED, FOLLOW_SUCCESS, GET_FOLLOWING_START, GET_FOLLOWING_SUCCESS, GET_NOTIFICATIONS_START, GET_NOTIFICATIONS_SUCCESS, GET_NOTIFICATIONS_FAILED, RECIVE_NOTIFICATION_SUCCESS, RECIVE_NOTIFICATION_FAILED, RECIVE_NOTIFICATION_START, REMOVE_ALL_NOTIFICATIONS_START, REMOVE_ALL_NOTIFICATIONS_SUCCESS, REMOVE_ALL_NOTIFICATIONS_FAILED, GET_MSG_NOTIFICATIONS_SUCCESS, REMOVE_NOTIFICATION_START, REMOVE_NOTIFICATION_SUCCESS, REMOVE_NOTIFICATION_FAILED, REMOVE_MSG_NOTIFICATIONS_SUCCESS, UNFOLLOW_START, UNFOLLOW_FAILED, UNFOLLOW_SUCCESS, GET_FOLLOWING_FAILED, GET_FOLLOWERS_START, GET_FOLLOWERS_SUCCESS, GET_FOLLOWERS_FAILED
 } from '../../../constants/actionTypes'
 
 
@@ -59,7 +59,7 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allUsers: {
-                    users: state.allUsers?.users?.filter(user=> user.id!==action.payload.id )
+                    users: state.allUsers?.users?.filter(user => user.id !== action.payload.id)
                 },
                 following: [action.payload, ...state?.following],
                 loading: false
@@ -89,24 +89,39 @@ const userReducer = (state = initialState, action) => {
                 loading: false
             }
 
-
         case GET_FOLLOWING_START:
             return {
                 ...state,
                 loading: true
             }
-
         case GET_FOLLOWING_SUCCESS:
             return {
                 ...state,
                 following: action.payload,
                 loading: false
             }
-
-        case GET_FOLLOWING_START:
+        case GET_FOLLOWING_FAILED:
             return {
                 ...state,
                 error: action.payload,
+                loading: false
+            }
+
+        case GET_FOLLOWERS_START:
+            return {
+                ...state,
+                loading: true
+            }
+        case GET_FOLLOWERS_SUCCESS:
+            return {
+                ...state,
+                followers:action.payload,
+                loading: false
+            }
+        case GET_FOLLOWERS_FAILED:
+            return {
+                ...state,
+                error : action.payload,
                 loading: false
             }
 

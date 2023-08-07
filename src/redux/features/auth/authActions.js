@@ -1,15 +1,16 @@
 import {
-    AUTH, LOCALSTORAGE_USER,
-    LOGOUT_SUCCESS, LOGOUT_START, LOGOUT_FAILED, AUTH_START, AUTH_SUCCESS, AUTH_FAILED
+    LOCALSTORAGE_USER,
+    LOGOUT_SUCCESS, LOGOUT_START, LOGOUT_FAILED,
+    AUTH_START, AUTH_SUCCESS, AUTH_FAILED
 } from '../../../constants/actionTypes'
 import * as api from '../../../api/apiIndex'
 
+
+
 export const socialAuth = (provider, data) => async (dispatch) => {
     dispatch({ type: AUTH_START })
-
     console.warn('socialAuth actions')
-
-    try {
+    try {  
         // const result = data
         const token = data.credential
         const { status, data: { result } } = await api.socialAuth({ provider, data })
@@ -21,7 +22,7 @@ export const socialAuth = (provider, data) => async (dispatch) => {
 
     } catch (error) {
         console.log(error)
-        dispatch({ type: AUTH_FAILED, payload: error.response.data })
+        dispatch({ type: AUTH_FAILED, payload: error?.response?.data })
 
     }
 }
@@ -39,7 +40,7 @@ export const signIn = (formData) => async (dispatch) => {
         dispatch({ type: AUTH_SUCCESS, payload: data })
     } catch (error) {
         console.log(error)
-        dispatch({ type: AUTH_FAILED, payload: error.response.data })
+        dispatch({ type: AUTH_FAILED, payload: error?.response?.data })
     }
 }
 
@@ -56,7 +57,7 @@ export const signUp = (formData) => async (dispatch) => {
 
     } catch (error) {
         console.log(error)
-        dispatch({ type: AUTH_FAILED, payload: error.response.data })
+        dispatch({ type: AUTH_FAILED, payload: error?.response?.data })
     }
 
 }
@@ -64,10 +65,10 @@ export const signUp = (formData) => async (dispatch) => {
 
 export const logout = () => async (dispatch, getState) => {
     console.log('logout')
-    const { userId } = getState().auth
     dispatch({ type: LOGOUT_START })
+    const { userId } = getState().auth
     try {
-        const data = await api.logout(userId)
+        const data = await api.logoutUser(userId)
         const { status } = data
         console.log(data)
         if (status === 200)

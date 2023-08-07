@@ -1,10 +1,12 @@
 import React, { Fragment, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Waypoint } from 'react-waypoint'
+
 import Person from './Person'
 import { StyledPostsBox } from '../posts/styles'
-import { Waypoint } from 'react-waypoint'
-import { useDispatch, useSelector } from 'react-redux'
-import { Box } from '@mui/material'
 import { getFollowing, getUsers } from '../../redux/features/user/userActions'
+
+import { Box } from '../../imports/materialuiComponents' 
 
 const FindPeople = () => {
     const [page, setPage] = useState(1)

@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Avatar, AvatarGroup, Box, ImageList, ListItem, ListItemAvatar,
-  ListItemText, Typography, Divider, List
-} from '@mui/material'
-import { grey } from '@mui/material/colors'
+import { useDispatch ,useSelector} from 'react-redux'
 
-import { StyledBox, StyledInnerBox, StyledTypography } from './styles'
-
-import propic from '../../images/propic.jpg'
-import { useDispatch, useSelector } from 'react-redux'
 import ChatListItem from '../chat/ChatListItem'
 import { getChatUsers } from '../../redux/features/chat/chatActions'
+import { StyledBox, StyledInnerBox, StyledTypography } from './styles'
+
+import { Box } from '../../imports/materialuiComponents'
 
 
 const RightSidebar = () => {

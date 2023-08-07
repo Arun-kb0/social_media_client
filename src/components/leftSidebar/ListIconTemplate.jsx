@@ -1,6 +1,10 @@
-import { Divider, ListItemText, ListItemButton, ListItem, Badge } from '@mui/material'
 import { StyledListItemIcon } from './styles'
 import { Link } from 'react-router-dom'
+import {
+  ListItemText, ListItemButton, ListItem, Badge
+} from '../../imports/materialuiComponents'
+
+
 
 const ListIconTemplate = ({ icon, text, linkTo, onClick , badgeContent}) => (
   <ListItem

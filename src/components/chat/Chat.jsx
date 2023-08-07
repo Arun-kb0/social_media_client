@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef, } from 'react'
-import { Avatar, Box, Button, IconButton, TextField, Typography } from '@mui/material'
 import { StyledChatHeader, StyledChatBox, } from './styles'
-import { grey, deepOrange } from '@mui/material/colors';
+import {
+    Avatar, Box, Button, IconButton, TextField, Typography,
+    grey, deepOrange
+} from '../../imports/materialuiComponents'
+import {SendIcon, VideocamIcon, CallIcon,} from '../../imports/materialIcons';
 
-import SendIcon from '@mui/icons-material/Send';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import CallIcon from '@mui/icons-material/Call';
+
 import Message from './Message';
 import { useSelector, useDispatch } from 'react-redux'
-import {  reciveMessage, sendMessage } from '../../redux/features/chat/chatActions';
+import { reciveMessage, sendMessage } from '../../redux/features/chat/chatActions';
 import ChatUsers from './ChatUsers';
 import { REMOVE_MSG_NOTIFICATIONS_SUCCESS } from '../../constants/actionTypes';
 
@@ -34,9 +35,9 @@ const Chat = () => {
         }, [100])
     }, [messages?.length])
 
-    useEffect(()=>{
+    useEffect(() => {
         dispatch({ type: REMOVE_MSG_NOTIFICATIONS_SUCCESS, payload: null })
-    },[])
+    }, [])
 
     const handleSendMessage = () => {
         console.log(messageInput.length)
@@ -70,6 +71,7 @@ const Chat = () => {
 
                     <ChatHeader chatUser={chatUser} />
                     <Messages
+                        key={userId}
                         messages={messages}
                         userId={userId}
                         chatContainerRef={chatContainerRef}
@@ -136,13 +138,15 @@ const ChatHeader = ({ chatUser }) => (
 
 
 const Messages = ({ messages, userId, chatContainerRef }) => (
-    <Box sx={{
-        height: '79.5%', bgcolor: grey[200], padding: 1,
-        overflowY: 'scroll',
-        '&::-webkit-scrollbar': {
-            display: 'none'
-        }
-    }}
+    <Box
+        key={userId}
+        sx={{
+            height: '79.5%', bgcolor: grey[200], padding: 1,
+            overflowY: 'scroll',
+            '&::-webkit-scrollbar': {
+                display: 'none'
+            }
+        }}
     >
         {messages?.map((message) => (
             <Message

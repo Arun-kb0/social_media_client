@@ -1,5 +1,4 @@
-import { Avatar, Box, Paper, styled } from "@mui/material";
-
+import { Avatar, Box, Paper, styled, } from '../../imports/materialuiComponents'
 
 export const StyledBox = styled(Box)(({ theme }) => ({
     backgroundColor: 'gray',

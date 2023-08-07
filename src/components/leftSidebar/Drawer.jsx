@@ -1,9 +1,7 @@
-import { IconButton, Typography, SwipeableDrawer, List } from '@mui/material'
 import React, { useState } from 'react'
 import ListIconTemplate from './ListIconTemplate'
-import HomeIcon from '@mui/icons-material/Home';
-
-
+import { SwipeableDrawer,List } from '../../imports/materialuiComponents';
+import { HomeIcon } from '../../imports/materialIcons';
 
 const Drawer = () => {
     const [open, setOpen] = useState(true)

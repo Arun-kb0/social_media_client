@@ -1,6 +1,4 @@
-import { Box, Typography, ListItemIcon } from "@mui/material";
-import { grey, blue } from "@mui/material/colors";
-import { styled } from '@mui/material/styles';
+import { Box, ListItemIcon, styled } from '../../imports/materialuiComponents'
 
 
 export const StyledInnerBox = styled(Box)(({ theme }) => ({

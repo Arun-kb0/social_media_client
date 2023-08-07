@@ -1,8 +1,4 @@
-import { Box, InputBase } from "@mui/material"
-import { styled } from '@mui/material'
-import { grey, green } from "@mui/material/colors"
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
-
+import { Box, InputBase, styled, green } from '../../imports/materialuiComponents'
 
 export const StyledChatBox = styled(Box)(({ theme }) => ({
     display: 'flex',

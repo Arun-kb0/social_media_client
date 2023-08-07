@@ -1,8 +1,8 @@
-import { Toolbar, Box, InputBase, IconButton, Popper, Stack, Paper } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import { styled, alpha } from '@mui/material/styles';
-import zIndex from "@mui/material/styles/zIndex";
 
+import {
+    Toolbar, Box, InputBase, IconButton, Stack, Paper,
+    grey, styled, alpha
+} from "../../imports/materialuiComponents";
 
 export const StyledStack = styled(Stack)(({ theme }) => ({
     position: 'absolute',

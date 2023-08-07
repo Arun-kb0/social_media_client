@@ -1,23 +1,18 @@
-import React, { useState } from 'react'
-import { Box, List, Divider } from '@mui/material'
-import HomeIcon from '@mui/icons-material/Home';
-import { blue, grey } from '@mui/material/colors'
+import React from 'react'
+
 import ListIconTemplate from './ListIconTemplate';
 import { StyledInnerBox } from './styles';
-import AddIcon from '@mui/icons-material/Add';
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
-import PersonIcon from '@mui/icons-material/Person';
-import GroupIcon from '@mui/icons-material/Group';
-import Diversity2Icon from '@mui/icons-material/Diversity2';
-import TextsmsIcon from '@mui/icons-material/Textsms';
-
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom';
 import { logout } from '../../redux/features/auth/authActions';
 import { SET_FIND_PEOPLE_OPEN, SET_FOLLOWING_OPEN, SET_POSTS_OPEN } from '../../constants/actionTypes';
 import { clearChatState } from '../../redux/features/chat/chatActions';
-import { getFollowing } from '../../redux/features/user/userActions';
+
+import { Box, List, Divider  , blue} from '../../imports/materialuiComponents'
+
+import {
+  HomeIcon, LoginIcon, LogoutIcon, GroupIcon,
+  Diversity2Icon, TextsmsIcon, AddIcon,PersonIcon
+} from '../../imports/materialIcons';
 
 const LeftSidebar = () => {
   const dispatch = useDispatch()

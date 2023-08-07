@@ -1,27 +1,27 @@
 import {
-    GET_POST,
     DELETE_POST_FAILED, DELETE_POST_SUCCESS,
     EDIT_POST_FAILED, EDIT_POST_START, EDIT_POST_SUCCESS,
     LIKE_START, LIKE_SUCCESS, LIKE_FAILED,
     GET_LIKED_START, GET_LIKED_SUCCESS, GET_LIKED_FAILED,
     COMMENT_START, COMMENT_SUCCESS, COMMENT_FAILED, GET_COMMENT_START, GET_COMMENT_SUCCESS, GET_COMMENT_FAILED,
     CREATE_POST_START, CREATE_POST_SUCCESS, CREATE_POST_FAILED,
-    GET_USER_POST_START, GET_USER_POST_SUCCESS, GET_USER_POST_FAILED, RELAM_CONNECT_START, RELAM_CONNECT_SUCCESS, RELAM_CONNECT_FAILED, GET_SEARCH_START, GET_SEARCH_SUCCESS, GET_SEARCH_FAILED, DELETE_COMMENT_START, DELETE_COMMENT_SUCCESS, DELETE_COMMENT_FAILED
+    GET_USER_POST_START, GET_USER_POST_SUCCESS, GET_USER_POST_FAILED, RELAM_CONNECT_START, RELAM_CONNECT_SUCCESS, RELAM_CONNECT_FAILED, GET_SEARCH_START, GET_SEARCH_SUCCESS, GET_SEARCH_FAILED, DELETE_COMMENT_START, DELETE_COMMENT_SUCCESS, DELETE_COMMENT_FAILED, GET_POST_START, GET_POST_FAILED, GET_POST_SUCCESS
 
 } from "../../../constants/actionTypes";
 import * as api from '../../../api/apiIndex'
-import axios from "axios";
+import { axios,Relam } from "../../../imports/other";
 
-import * as Relam from 'realm-web'
 
 export const getPosts = (page) => async (dispatch) => {
+    dispatch({ type: GET_POST_START })
     try {
         const source = axios.CancelToken.source()
         const { data } = await api.getPosts(page, source)
 
-        dispatch({ type: GET_POST, payload: data })
+        dispatch({ type: GET_POST_SUCCESS, payload: data })
     } catch (error) {
         console.log(error)
+        dispatch({ type: GET_POST_FAILED })
     }
 }
 
@@ -151,14 +151,14 @@ export const commentPostListener = (creatorId) => (dispatch, getState) => {
     dispatch({ type: COMMENT_START })
     const { socket } = getState().socketioReducer
     const { userId } = getState().auth
+
     const handleComment = (data) => {
         console.log("commentPostSuccess on")
         console.log(" creatorId ", creatorId)
         const { postedComment, postId } = data
         console.log(postedComment, postId)
 
-        if (creatorId !== userId)
-
+        if (creatorId !== userId) {
             socket.emit("sendNotification",
                 {
                     postId,
@@ -167,11 +167,12 @@ export const commentPostListener = (creatorId) => (dispatch, getState) => {
                     type: 'commented',
                 }
             )
-
-        dispatch({ type: COMMENT_SUCCESS, payload: { commentedPostId: postId, comment: postedComment } })
+        }
+        
+        dispatch({ type: COMMENT_SUCCESS, payload: { commentedPostId: postId, comment: postedComment , userId } })
     }
 
-    const handleCommentFailed = (data) => {
+    const handleCommentFailed = () => {
         throw new Error('comment failed')
     }
 
@@ -191,15 +192,23 @@ export const commentPostListener = (creatorId) => (dispatch, getState) => {
 }
 
 
-export const getComments = (postId) => async (dispactch) => {
+export const getComments = (postId) => async (dispactch, getState) => {
     dispactch({ type: GET_COMMENT_START })
+    const { userId } = getState().auth
+    
     try {
         const { data: { _id, comments } } = await api.getComments(postId)
-        const newPostComments = { [_id]: comments }
-        console.log(newPostComments)
-        dispactch({ type: GET_COMMENT_SUCCESS, payload: newPostComments })
+
+        if (_id && comments) {
+            const newPostComments = { [_id]: comments }
+            console.log(newPostComments)
+            dispactch({ type: GET_COMMENT_SUCCESS, payload: newPostComments })
+        } else {
+            console.log('no comments to load')
+            dispactch({ type: GET_COMMENT_FAILED, payload: 'no comments to load' })
+        }
     } catch (error) {
-        console.log(error)
+        console.error(error)
         dispactch({ type: GET_COMMENT_FAILED, payload: error })
     }
 }
@@ -256,7 +265,7 @@ export const deleteComment = ({ postId, creatorId, commentId, commentedUserId })
         const { status, data } = await api.deleteComment({ postId, creatorId, commentId, commentedUserId })
         if (status !== 200) throw new Error('delete comment failed')
         console.log(status, data)
-        dispatch({ type: DELETE_COMMENT_SUCCESS, payload: { deletedCommentPostId: postId, commentId } })
+        dispatch({ type: DELETE_COMMENT_SUCCESS, payload: { deletedCommentPostId: postId, commentId, count: data.count } })
     } catch (error) {
         console.log(error)
         dispatch({ type: DELETE_COMMENT_FAILED, payload: error })

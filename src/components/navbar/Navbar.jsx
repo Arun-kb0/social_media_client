@@ -1,35 +1,32 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import {
-  AppBar, Typography, Avatar, MenuItem, Menu, Fade, Box, Button, MenuList, Paper, Popper, List, ListItem, fabClasses, Stack,
-} from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+
+import MobileMenu from './MobileMenu';
+import { getAllNotifications, ReciveNotifications, removeAllNotifications, removeNotification } from '../../redux/features/user/userActions';
+import { mongodbRelemConnect, searchPost } from '../../redux/features/post/postActions';
+import { SET_SEARCH_OPEN } from '../../constants/actionTypes';
 import {
   Search, StyledToolbar, Icons, UserBox, SearchIconWrapper,
   StyledInputBase, StyledIconButton, StyledStack, StyledPaper
 } from './styles';
-import { blueGrey } from '@mui/material/colors';
-
-import propic from '../../images/propic.jpg'
-import SearchIcon from '@mui/icons-material/Search';
-import MenuIcon from '@mui/icons-material/Menu';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import InterestsIcon from '@mui/icons-material/Interests';
-import MoreIcon from '@mui/icons-material/MoreVert';
-
-import { Link } from 'react-router-dom'
-
-import MobileMenu from './MobileMenu';
 import NavIcon from './NavIcon';
-import { useDispatch, useSelector } from 'react-redux';
-import { corsOptions } from '../../../../server/config/corsOptions';
-import { getAllNotifications, ReciveNotifications, removeAllNotifications, removeNotification } from '../../redux/features/user/userActions';
 
-import * as Relam from 'realm-web'
-import { mongodbRelemConnect, searchPost } from '../../redux/features/post/postActions';
-import { SET_SEARCH_OPEN } from '../../constants/actionTypes';
+import {
+  blueGrey, AppBar, Typography, Avatar, MenuItem, Menu,
+  Fade, Box, Button, MenuList,
+} from '../../imports/materialuiComponents';
+import {
+  SearchIcon, NotificationsIcon, MailIcon, MenuIcon,
+  InterestsIcon, MoreIcon
+} from '../../imports/materialIcons';
+import { logout } from '../../redux/features/auth/authActions';
+import { clearChatState } from '../../redux/features/chat/chatActions';
+
 
 const Navbar = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [openMobileMenu, setOpenMobileMenu] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -42,10 +39,10 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null)
 
 
-  const { isOnline, photo } = useSelector(state => state.auth)
+  const { isOnline, photo, authData } = useSelector(state => state.auth)
   const { socket } = useSelector(state => state.socketioReducer)
   const { notification } = useSelector(state => state.user)
-  const { mongodbRelam ,searchResult} = useSelector(state => state.post)
+  const { mongodbRelam } = useSelector(state => state.post)
 
 
   const handleDrawer = () => {
@@ -67,28 +64,6 @@ const Navbar = () => {
     }
   }, [socket])
 
-
-  // // ! relem code 
-  // useEffect(() => {
-
-  //   const invokeRelam = async () => {
-  //     const RELAM_APP_ID = "socialmedia-racyh"
-  //     const app = new Relam.App({ id: RELAM_APP_ID })
-  //     const credentials = Relam.Credentials.anonymous()
-
-  //     try {
-  //       const user = await app.logIn(credentials)
-  //       const testPost = await user.functions.getPostTest()
-  //       console.warn("relam")
-  //       console.log(testPost)
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
-
-  //   invokeRelam()
-
-  // }, [])
 
   useEffect(() => {
     const search = async () => {
@@ -120,6 +95,10 @@ const Navbar = () => {
         setAnchorEl(e.currentTarget)
         setOpen(true)
         return
+      case 'logout':
+        dispatch(clearChatState())
+        dispatch(logout())
+        return
       case 'clearAllNoti':
         dispatch(removeAllNotifications())
         return
@@ -134,7 +113,7 @@ const Navbar = () => {
           console.log(searchInput)
           // relamSearch()
           dispatch(searchPost(searchInput))
-          dispatch({type: SET_SEARCH_OPEN , payload:true})
+          dispatch({ type: SET_SEARCH_OPEN, payload: true })
           setSearchInput('')
           setAutoCompleteOpen(false)
         }
@@ -244,13 +223,7 @@ const Navbar = () => {
             />
           }
 
-
-
-
-
-
           <Icons>
-            <NavIcon icon={<MailIcon />} badgeContent={4} />
             <NavIcon
               icon={
                 <NotificationsIcon
@@ -289,9 +262,12 @@ const Navbar = () => {
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           marginThreshold={50}
         >
-          <MenuItem onClick={() => { }}>Profile</MenuItem>
-          <MenuItem onClick={() => { }}>My account</MenuItem>
-          <MenuItem onClick={() => { }}>Logout</MenuItem>
+
+          <MenuItem onClick={() => { navigate('/profile') }}>Profile</MenuItem>
+          {authData
+            ? <MenuItem onClick={() => handleClick('logout')}>Logout</MenuItem>
+            : <MenuItem onClick={() => handleClick(navigate('/auth'))}>Login</MenuItem>
+          }
         </Menu>
 
         <NotificationMenu

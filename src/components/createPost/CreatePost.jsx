@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, IconButton, TextField, Typography, Fab } from '@mui/material'
-import {LoadingButton} from '@mui/lab'
-import { grey, red } from '@mui/material/colors'
 import {
   StyledBox, StyledContainer, StyledDragAndDrop, StyledCreateButton,
   StyledTextFiels, StyledForm, StyledDragAndDropContainer,
   EmojiPickerContainer, StyledImage
 } from './Styles'
 
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
-import CloseIcon from '@mui/icons-material/Close';
 
 import EmojiPicker from "emoji-picker-react";
 import { useDispatch, useSelector } from 'react-redux'
-import { createPost, editPost } from '../../redux/features/post/postActions';
-
 import { useLocation } from 'react-router-dom';
+
+import { createPost, editPost } from '../../redux/features/post/postActions';
 import Notification from '../notification/Notification';
+import { Box, Button, IconButton, TextField, Typography, Fab, LoadingButton } from '../../imports/materialuiComponents'
+import {
+  CloseIcon, AddPhotoAlternateIcon, EmojiEmotionsIcon
+} from '../../imports/materialIcons';
+
 
 const CreatePost = (props) => {
   const { postToEdit, edit } = props
@@ -41,7 +40,7 @@ const CreatePost = (props) => {
   const { authData } = useSelector(state => state.auth)
   const { message, isMessage, loading } = useSelector(state => state.post)
 
-  
+
 
   useEffect(() => {
     console.log("postToEdit useEffect")
@@ -146,7 +145,7 @@ const CreatePost = (props) => {
             />
 
 
-         
+
 
             <LoadingButton
               size="small"

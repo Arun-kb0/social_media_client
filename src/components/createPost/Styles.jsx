@@ -1,7 +1,8 @@
-import { Box, styled, alpha, TextField } from "@mui/material";
-import { Container } from '@mui/material'
-import { grey, red } from '@mui/material/colors'
-import EmojiPicker from "emoji-picker-react";
+// import { Box, styled, alpha, TextField } from "@mui/material";
+// import { Container } from '@mui/material'
+// import { grey } from '@mui/material/colors'
+
+import { Box, styled, alpha, Container, grey } from '../../imports/materialuiComponents'
 
 
 
@@ -77,7 +78,7 @@ export const StyledTextFiels = styled(Box)(({ theme }) => ({
     },
     [theme.breakpoints.only('xs')]: {
         width: "100%",
-        paddingLeft:30
+        paddingLeft: 30
 
     },
 

@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Box, CardContent, TextField, Button, Typography, Avatar, IconButton } from '@mui/material'
-import { CommentBox, StyledCommentText } from '../styles';
-import SendIcon from '@mui/icons-material/Send';
 import { useDispatch, useSelector } from 'react-redux';
-import { deepOrange } from '@mui/material/colors';
+
 import { commentPostListener, deleteComment } from '../../../redux/features/post/postActions';
 import { useNavigate } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { corsOptions } from '../../../../../server/config/corsOptions';
+import { CommentBox, StyledCommentText } from '../styles';
+
+import {
+    deepOrange, Box, CardContent, TextField, Button, Typography,
+    Avatar, IconButton
+} from '../../../imports/materialuiComponents';
+import { DeleteIcon, SendIcon } from '../../../imports/materialIcons';
 
 
 const Comment = ({ postId, username, postComments, setcommentCount, creatorId }) => {
@@ -20,12 +22,9 @@ const Comment = ({ postId, username, postComments, setcommentCount, creatorId })
     const scrollRef = useRef(null)
 
     const { authData, userId } = useSelector(state => state.auth)
-
-
-
-
-
     const { socket } = useSelector(state => state.socketioReducer)
+
+
     const handleSubmit = (e) => {
         if (!authData) navigate('/auth')
         if (commetData !== '') {
@@ -35,7 +34,11 @@ const Comment = ({ postId, username, postComments, setcommentCount, creatorId })
                 comment: commetData
             })
             setcommetData('')
-            setcommentCount(postComments[postId]?.length + 1)
+            setcommentCount(
+                postComments
+                    ? postComments[postId]?.length + 1
+                    : 0
+            )
         }
     }
     const handleChange = (e) => {
@@ -43,8 +46,8 @@ const Comment = ({ postId, username, postComments, setcommentCount, creatorId })
     }
 
     useEffect(() => {
-        setComments(postComments[postId])
-    }, [postComments[postId]?.length])
+       postComments &&  setComments(postComments[postId])
+    }, [postComments && postComments[postId]?.length])
 
     useEffect(() => {
         if (socket && creatorId) {
@@ -104,7 +107,7 @@ const Comment = ({ postId, username, postComments, setcommentCount, creatorId })
 
 
 const CommentText = ({ comment, username, handleDeleteComment, commentId, commentedUserId, creatorId, userId }) => {
-    
+
 
     return (
         <StyledCommentText component='div'>
@@ -115,7 +118,7 @@ const CommentText = ({ comment, username, handleDeleteComment, commentId, commen
                 <Typography >{comment}</Typography>
             </CommentBox>
 
-            {(commentedUserId === userId  | creatorId === userId )
+            {(commentedUserId === userId | creatorId === userId)
                 ? <IconButton
                     size='small' pl={5}
                     onClick={() => handleDeleteComment({ commentId, commentedUserId })}

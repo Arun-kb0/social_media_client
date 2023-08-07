@@ -1,4 +1,4 @@
-import { Badge } from '@mui/material'
+import { Badge } from '../../imports/materialuiComponents'
 import { StyledIconButton } from './styles'
 
 const NavIcon = ({ icon, badgeContent, variant, isOnline,overlap }) => (
@@ -8,7 +8,6 @@ const NavIcon = ({ icon, badgeContent, variant, isOnline,overlap }) => (
             color={isOnline ? 'success' : 'error'}
             variant={variant}
             overlap={overlap}
-
         >
             {icon}
         </Badge>

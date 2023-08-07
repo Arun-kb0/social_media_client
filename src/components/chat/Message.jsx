@@ -1,8 +1,13 @@
 import React, { useState } from 'react'
-import { Avatar, Box, Typography } from '@mui/material'
 import { MessageBox, } from './styles'
-import { blueGrey, deepOrange, green, grey, lightGreen } from '@mui/material/colors';
-import moment from 'moment'
+
+import { moment } from '../../imports/other'
+
+import {
+    Avatar, Box, Typography, blueGrey,
+    deepOrange, grey
+} from '../../imports/materialuiComponents'
+
 
 
 const Message = ({ authorName, authorId, message, createdAt, userId }) => {

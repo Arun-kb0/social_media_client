@@ -1,10 +1,13 @@
-import { Avatar, Button, Typography, Box, Badge } from '@mui/material'
 import React, { useState } from 'react'
-import { StyledUserPaper } from './styles'
 import { useDispatch, useSelector } from 'react-redux'
+
 import { follow, unFollow } from '../../redux/features/user/userActions'
-import { deepOrange, orange } from '@mui/material/colors'
 import { useNavigate } from 'react-router-dom'
+import { StyledUserPaper } from './styles'
+
+import {
+    orange, Avatar, Button, Typography, Box, Badge
+} from '../../imports/materialuiComponents'
 
 
 const Person = ({ btn1, btn2, user }) => {

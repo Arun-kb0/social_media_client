@@ -1,6 +1,13 @@
 import {
     GET_USERS_START, GET_USERS_SUCCESS, GET_USERS_FAILED,
-    FOLLOW_START, FOLLOW_FAILED, FOLLOW_SUCCESS, GET_FOLLOWING_FAILED, GET_FOLLOWING_START, GET_FOLLOWING_SUCCESS, GET_NOTIFICATIONS_START, GET_NOTIFICATIONS_SUCCESS, GET_NOTIFICATIONS_FAILED, RECIVE_NOTIFICATION_START, RECIVE_NOTIFICATION_SUCCESS, RECIVE_NOTIFICATION_FAILED, REMOVE_ALL_NOTIFICATIONS_START, REMOVE_ALL_NOTIFICATIONS_SUCCESS, REMOVE_ALL_NOTIFICATIONS_FAILED, GET_MSG_NOTIFICATIONS_SUCCESS, REMOVE_NOTIFICATION_START, REMOVE_NOTIFICATION_SUCCESS, REMOVE_MSG_NOTIFICATIONS_SUCCESS, UNFOLLOW_START, UNFOLLOW_SUCCESS, UNFOLLOW_FAILED
+    FOLLOW_START, FOLLOW_FAILED, FOLLOW_SUCCESS,
+    GET_FOLLOWING_FAILED, GET_FOLLOWING_START, GET_FOLLOWING_SUCCESS,
+    GET_NOTIFICATIONS_START, GET_NOTIFICATIONS_SUCCESS, GET_NOTIFICATIONS_FAILED,
+    RECIVE_NOTIFICATION_START, RECIVE_NOTIFICATION_SUCCESS, RECIVE_NOTIFICATION_FAILED,
+    REMOVE_ALL_NOTIFICATIONS_START, REMOVE_ALL_NOTIFICATIONS_SUCCESS, REMOVE_ALL_NOTIFICATIONS_FAILED,
+    GET_MSG_NOTIFICATIONS_SUCCESS,REMOVE_NOTIFICATION_START, REMOVE_NOTIFICATION_SUCCESS, REMOVE_MSG_NOTIFICATIONS_SUCCESS,
+    UNFOLLOW_START, UNFOLLOW_SUCCESS, UNFOLLOW_FAILED,
+    GET_FOLLOWERS_START, GET_FOLLOWERS_SUCCESS, GET_FOLLOWERS_FAILED
 } from '../../../constants/actionTypes'
 import * as api from '../../../api/apiIndex'
 
@@ -64,6 +71,19 @@ export const getFollowing = () => async (dispacth) => {
 }
 
 
+export const getFollowers = () => async (dispatch) => {
+    dispatch({type:GET_FOLLOWERS_START})
+    try {
+        const { data: { followers }  } = await api.getFollowers()
+        console.log(followers)
+        dispatch({type:GET_FOLLOWERS_SUCCESS , payload:followers})
+    } catch (error) {
+        console.log(error)
+        dispatch({type:GET_FOLLOWERS_FAILED , payload:error})
+    }
+
+}
+
 
 export const getAllNotifications = () => async (dispatch,) => {
     dispatch({ type: GET_NOTIFICATIONS_START })
@@ -89,7 +109,6 @@ export const ReciveNotifications = () => (dispatch, getState) => {
         console.log(data)
         if (data?.newNotification?.newMessageNotification?.actionType === 'message') {
             const { newNotification: { newMessageNotification, totalMessageCount } } = data
-
             dispatch({
                 type: GET_MSG_NOTIFICATIONS_SUCCESS,
                 payload: {

@@ -1,5 +1,7 @@
-import {Box, Paper, styled} from '@mui/material'
-import { blueGrey } from '@mui/material/colors'
+// import {Box, Paper, styled} from '@mui/material'
+// import { blueGrey } from '@mui/material/colors'
+
+import { Paper, styled } from '../../imports/materialuiComponents'
 
 export const StyledUserPaper = styled(Paper)(({theme})=>({
     display:'flex',

@@ -1,19 +1,21 @@
-import { Box, Grow, Zoom } from '@mui/material'
 import React, { useEffect, Fragment, useState, useMemo } from 'react'
-import Post from './post/Post'
+import { Waypoint } from 'react-waypoint'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { commentPostListener, getLikedPosts, getPosts, likePostListener } from '../../redux/features/post/postActions'
+
+
+import Post from './post/Post'
+import {  getLikedPosts, getPosts, likePostListener } from '../../redux/features/post/postActions'
 import { StyledPostsBox } from './styles'
 
-import { Waypoint } from 'react-waypoint'
-import useDebounce from '../../hooks/useDebounce'
-import { getNotifications } from '../../api/apiIndex'
-import { useNavigate } from 'react-router-dom'
+import { Box } from '../../imports/materialuiComponents'
+
+
 
 const Posts = ({posts, currentPage, numberOfPages, postIds, likedPostIds}) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  
+
   const [page, setPage] = useState(1)
   const [isCancelled, setIsCancelled] = useState(false)
   const [likeStateData, setLikeStateData] = useState(null)
@@ -34,7 +36,7 @@ const Posts = ({posts, currentPage, numberOfPages, postIds, likedPostIds}) => {
 
 
   useEffect(() => {
-    if (authData?.result) {
+    if (authData) {
       console.log('getliked called')
       dispatch(getLikedPosts(postIds))
     }

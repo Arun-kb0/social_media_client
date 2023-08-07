@@ -1,26 +1,34 @@
 
-import React, { useEffect, useMemo, useState } from 'react'
-import { Avatar, Badge, Box, ListItem, ListItemAvatar, ListItemButton, Typography, useMediaQuery } from '@mui/material'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { createRoom, getMessages } from '../../redux/features/chat/chatActions'
-import { grey, orange } from '@mui/material/colors'
-import { removeNotification } from '../../redux/features/user/userActions'
 
+import { createRoom, getMessages } from '../../redux/features/chat/chatActions'
+import { removeNotification } from '../../redux/features/user/userActions'
+import { useNavigate } from 'react-router-dom'
+
+import {
+    Avatar, Badge, Box, ListItem, ListItemAvatar, ListItemButton,
+    Typography, grey, orange
+} from '../../imports/materialuiComponents'
 
 
 
 const ChatListItem = ({ name, photo, id, socket, lastMessage, isOnline }) => {
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const { messageNotification } = useSelector(state => state.user)
 
-    
+
 
     const handleChat = () => {
         dispatch(createRoom({ socket, id, name, photo }))
         dispatch(getMessages({ id }))
-        dispatch(removeNotification(id,'message'))
+        dispatch(removeNotification(id, 'message'))
+        
+        if (window.location.pathname === '/')
+            navigate('/chat')
     }
     return (
         <ListItem

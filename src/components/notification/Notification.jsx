@@ -1,6 +1,5 @@
-import { Snackbar } from '@mui/material'
 import React, { useState, useRef, useMemo } from 'react'
-
+import { Snackbar } from '../../imports/materialuiComponents'
 
 const Notification = ({ message, isMessage }) => {
     const [open, setOpen] = useState(false)

@@ -1,27 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
-import {
-  Avatar, CardActions, CardContent, CardHeader, CardMedia,
-  Checkbox, IconButton, Typography, Menu, MenuItem, Box,
-  ListItemIcon, Collapse, Zoom
-} from '@mui/material'
-
-import { grey, red } from '@mui/material/colors'
-import moment from 'moment'
-
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import Favorite from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ModeCommentIcon from '@mui/icons-material/ModeComment';
-import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import Comment from './Comment';
 import { StyledCard } from '../styles';
 import { deletePost, getComments, likePostListener } from '../../../redux/features/post/postActions'
 
-import { useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import Comment from './Comment';
+import {moment} from '../../../imports/other'
+import {
+  Avatar, CardActions, CardContent, CardHeader, CardMedia,
+  Checkbox, IconButton, Typography, Menu, MenuItem, Box,
+  ListItemIcon, Collapse, Zoom, 
+  grey, red,
+} from '../../../imports/materialuiComponents' 
+import {
+  FavoriteIcon, ShareIcon, DeleteIcon, ModeCommentIcon,
+  EditTwoToneIcon,FavoriteBorderIcon,MoreIcon
+} from '../../../imports/materialIcons';
 
 
 const Post = ({ post, likedPostIds, userId, username, creatorId, handleLike }) => {
@@ -45,7 +40,8 @@ const Post = ({ post, likedPostIds, userId, username, creatorId, handleLike }) =
 
   const handleExpanded = () => {
     setExpanded(prev => !prev)
-    if (expanded === false && !postComments[post._id]) {
+    // if (expanded === false && !postComments[post._id]) {
+      if (expanded === false ) {
       dispatch(getComments(post._id))
     }
   }
@@ -75,15 +71,13 @@ const Post = ({ post, likedPostIds, userId, username, creatorId, handleLike }) =
           action={
             post.creator_id == userId &&
             <IconButton onClick={handleMenuOpen}>
-              <MoreVertIcon />
+              <MoreIcon />
             </IconButton>
           }
           title={post?.title}
           subheader={moment(post?.createdAt).fromNow()}
         >
         </CardHeader>
-
-
 
         <CardMedia
           component='img'
@@ -106,8 +100,8 @@ const Post = ({ post, likedPostIds, userId, username, creatorId, handleLike }) =
             <Checkbox
               onClick={() => handleLike({ ...post, setLikeState })}
               checked={likeState.isLiked}
-              icon={<FavoriteBorder />}
-              checkedIcon={<Favorite sx={{ color: red[500] }} />}
+              icon={<FavoriteBorderIcon />}
+              checkedIcon={<FavoriteIcon sx={{ color: red[500] }} />}
             />
           </>
 

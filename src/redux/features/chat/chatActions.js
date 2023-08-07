@@ -6,10 +6,9 @@ import {
     , RECIVE_MESSAGE_FAILED, RECIVE_MESSAGE_START, RECIVE_MESSAGE_SUCCESS,
     SEND_MESSAGE_FAILED, SEND_MESSAGE_START, SEND_MESSAGE_SUCCESS
 } from "../../../constants/actionTypes"
-import { v4 as uuid } from "uuid"
 import * as api from '../../../api/apiIndex'
-import { follow } from "../user/userActions"
-import { useEffect } from "react"
+import { v4 as uuid } from "uuid"
+
 
 export const createRoom = ({ socket, id, name, photo }) => async (dispatch, getState) => {
     dispatch({ type: CREATE_CHAT_START })

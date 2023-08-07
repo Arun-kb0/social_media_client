@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Container, Typography, InputAdornment, IconButton, FormControl,
-  TextField, Box, Button, OutlinedInput, InputLabel, FormHelperText
 
-} from '@mui/material'
-import { LoadingButton } from '@mui/lab'
-
-import Person from '@mui/icons-material/Person';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-
+import Notification from '../notification/Notification';
 import { GoogleLoginButton } from "react-social-login-buttons";
 import { LoginSocialGoogle } from "reactjs-social-login";
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import { StyledPaper, StyledAvatar, StyledForm, StyledBox } from './styles';
 import { signIn, signUp, socialAuth } from '../../redux/features/auth/authActions';
-import { getFollowing } from '../../redux/features/user/userActions';
-import Notification from '../notification/Notification';
+
+import {
+  LoadingButton, Container, Typography, InputAdornment,
+  IconButton, FormControl, TextField, Box, Button,
+  OutlinedInput, InputLabel, FormHelperText
+} from '../../imports/materialuiComponents';
+import {
+  VisibilityIcon, VisibilityOffIcon, PersonIcon
+} from '../../imports/materialIcons';
 
 
 const Auth = () => {
@@ -125,7 +123,7 @@ const Auth = () => {
 
       <Container component={'div'} maxWidth='xs'>
         <StyledPaper elevation={4} >
-          <StyledAvatar > <Person /> </StyledAvatar>
+          <StyledAvatar > <PersonIcon /> </StyledAvatar>
           <Typography variant='h5'>
             {isSignUp ? 'SignUp' : 'Sing In'}
           </Typography>

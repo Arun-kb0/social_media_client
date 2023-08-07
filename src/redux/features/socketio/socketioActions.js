@@ -1,5 +1,6 @@
-import io from 'socket.io-client'
-import { RECIVE_NOTIFICATION_FAILED, RECIVE_NOTIFICATION_START, RECIVE_NOTIFICATION_SUCCESS, SOCKET_CONNECT_FAILED, SOCKET_CONNECT_START, SOCKET_CONNECT_SUCCESS, SOCKET_DISCONNECT_FAILED, SOCKET_DISCONNECT_START, SOCKET_DISCONNECT_SUCCESS } from '../../../constants/actionTypes'
+import {  SOCKET_CONNECT_FAILED, SOCKET_CONNECT_START, SOCKET_CONNECT_SUCCESS, SOCKET_DISCONNECT_FAILED, SOCKET_DISCONNECT_START, SOCKET_DISCONNECT_SUCCESS } from '../../../constants/actionTypes'
+import { io } from '../../../imports/other'
+
 
 
 export const socketConnect = () => (dispatch, getState) => {
@@ -29,6 +30,8 @@ export const socketDisConnect = () => (dispatch, getState) => {
         dispatch({ type: SOCKET_DISCONNECT_FAILED })
     }
 }
+
+
 
 
 

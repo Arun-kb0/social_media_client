@@ -5,10 +5,11 @@ import UserPosts from './UserPosts'
 import { getUserPosted } from '../../redux/features/post/postActions'
 import { ButtonDivider, ProfileButtons, StyledBox, StyledBoxContainer } from './styles'
 
-import { Avatar, Badge, Box, Typography, deepOrange, grey } from '../../imports/materialuiComponents'
+import { Avatar, Badge, Box, IconButton, Typography, deepOrange, grey } from '../../imports/materialuiComponents'
 import { getFollowers, getFollowing } from '../../redux/features/user/userActions'
 import Following from '../people/Following'
 import Followers from '../people/Followers'
+import { EditTwoToneIcon } from '../../imports/materialIcons'
 
 
 
@@ -20,15 +21,14 @@ const UserProfile = () => {
         followers: false,
         following: false,
     })
-    const { username, email } = useSelector(state => state.auth)
+    const { username, email, photo, isOnline } = useSelector(state => state.auth)
     const { following, followers } = useSelector(state => state.user)
-    const { userPosts } = useSelector(state=> state.post)
+    const { userPosts } = useSelector(state => state.post)
 
     const handleClick = (type) => {
         switch (type) {
             case 'created':
                 !open.create && dispatch(getUserPosted())
-                // open.create && setOpenComponent(!openComponent)
                 open.create
                     ? setOpenComponent(false)
                     : setOpenComponent(true)
@@ -39,7 +39,6 @@ const UserProfile = () => {
                 })
                 return;
             case 'followers':
-                // open.followers && setOpenComponent(!openComponent)
                 open.followers
                     ? setOpenComponent(false)
                     : setOpenComponent(true)
@@ -53,13 +52,13 @@ const UserProfile = () => {
                 open.following
                     ? setOpenComponent(false)
                     : setOpenComponent(true)
-                // open.following && setOpenComponent(!openComponent)
                 setOpen({
                     create: false,
                     followers: false,
                     following: true,
                 })
                 return;
+           
 
             default:
                 return
@@ -98,18 +97,20 @@ const UserProfile = () => {
                     {!openComponent &&
                         <>
                             <StyledBox>
-                                <Badge badgeContent='' color='success' overlap="circular" >
-                                    <Avatar sx={{ bgcolor: deepOrange[500], height: 100, width: 100 }} >
-                                        <Typography variant="h2" color="initial">{username[0]}</Typography>
-                                    </Avatar>
-                                </Badge>
-
+                                {photo
+                                    ? (<Badge badgeContent='' color='success' overlap="circular" invisible={isOnline ? false : true}  >
+                                        <Avatar src={photo} alt='' sx={{ width: 100, height: 100 }} />
+                                    </Badge>)
+                                    : (<Badge badgeContent='' color='success' overlap="circular" >
+                                        <Avatar sx={{ bgcolor: deepOrange[500], height: 100, width: 100 }} >
+                                            <Typography variant="h2" color="initial">{username[0]}</Typography>
+                                        </Avatar>
+                                    </Badge>)
+                                }
                             </StyledBox>
-
                             <StyledBox>
-                                <Typography variant='h3'
-                                    sx={{ paddingTop: 3, fontWeight: 70 }}
-                                >{username}
+                                <Typography variant='h3' sx={{ paddingTop: 3, fontWeight: 70 }}>
+                                    {username}
                                 </Typography>
                             </StyledBox>
 

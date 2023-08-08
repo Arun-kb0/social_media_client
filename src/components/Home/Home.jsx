@@ -12,11 +12,14 @@ import FindPeople from '../people/FindPeople'
 
 import { Stack, Fab, Tooltip, Box, grey } from '../../imports/materialuiComponents'
 import { AddIcon } from '../../imports/materialIcons'
+import { SET_POSTS_OPEN } from '../../constants/actionTypes'
+import { HomeContainer } from './styles'
 
 
 
 const Home = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const { isFindPeopleOpen, isPostsOpen, isFollowOpen, isSearchOpen } = useSelector(state => state.buttonToggle)
     const { posts, currentPage, numberOfPages, postIds, likedPostIds } = useSelector(state => state.post)
     const { socket } = useSelector(state => state?.scoketioReducer || {})
@@ -31,10 +34,10 @@ const Home = () => {
             return () => socket.off("setIsOnline", setIsOnline)
         }
     }, [socket])
-    
+
 
     return (
-        <Box
+        <HomeContainer
             sx={{ position: 'fixed', right: 0, top: 65, left: 0 }}
             className="mui-fixed"
         >
@@ -57,8 +60,8 @@ const Home = () => {
                         likedPostIds={likedPostIds}
                     />}
                 {isSearchOpen && <ViewSearch />}
-                {isFindPeopleOpen && (authData ? <FindPeople /> : <Navigate to='/auth'/> )}
-                {isFollowOpen && (authData ?  <Following /> : <Navigate to="/auth"/>)}
+                {isFindPeopleOpen && (authData ? <FindPeople /> : <Navigate to='/auth' />)}
+                {isFollowOpen && (authData ? <Following /> : <Navigate to="/auth" />)}
                 <RightSidebar />
 
 
@@ -77,7 +80,7 @@ const Home = () => {
                     </Fab>
                 </Tooltip>
             </Stack>
-        </Box>
+        </HomeContainer>
     )
 }
 

@@ -1,16 +1,18 @@
 import {
     SET_FIND_PEOPLE_OPEN, SET_POSTS_OPEN,
     SET_FOLLOWING_OPEN,
-    SET_SEARCH_OPEN
+    SET_SEARCH_OPEN,
+    SET_MOBILE_DRAWER_OPEN
 } from "../../../constants/actionTypes";
+
 
 const initialState = {
     isPostsOpen: true,
     isFindPeopleOpen: false,
     isFollowOpen: false,
-    isSearchOpen:false
+    isSearchOpen: false,
+    isMobileDrawerOpen:false
 }
-
 
 const buttonToggleReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -19,7 +21,8 @@ const buttonToggleReducer = (state = initialState, action) => {
                 ...state,
                 isPostsOpen: false,
                 isFollowOpen: false,
-                isSearchOpen:false,
+                isSearchOpen: false,
+                isMobileDrawerOpen: false,
                 isFindPeopleOpen: action.payload
             }
 
@@ -28,7 +31,8 @@ const buttonToggleReducer = (state = initialState, action) => {
                 ...state,
                 isFindPeopleOpen: false,
                 isFollowOpen: false,
-                isSearchOpen:false,
+                isSearchOpen: false,
+                isMobileDrawerOpen: false,
                 isPostsOpen: action.payload,
             }
         case SET_FOLLOWING_OPEN:
@@ -36,22 +40,28 @@ const buttonToggleReducer = (state = initialState, action) => {
                 ...state,
                 isFindPeopleOpen: false,
                 isPostsOpen: false,
-                isSearchOpen:false,
+                isSearchOpen: false,
+                isMobileDrawerOpen: false,
                 isFollowOpen: action.payload,
             }
         case SET_SEARCH_OPEN:
-            return{
+            return {
                 ...state,
                 isFindPeopleOpen: false,
                 isPostsOpen: false,
                 isFollowOpen: false,
+                isMobileDrawerOpen: false,
                 isSearchOpen: action.payload
             }
 
-        default:
+        case SET_MOBILE_DRAWER_OPEN:
             return {
-                ...state
-            };
+                ...state,
+                isMobileDrawerOpen: action.payload,
+            }
+
+        default:
+            return state
     }
 }
 

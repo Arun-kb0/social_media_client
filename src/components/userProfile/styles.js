@@ -12,6 +12,9 @@ export const StyledBoxContainer = styled(Box)(({ theme }) => ({
     width: '60%',
     [theme.breakpoints.up('xl')]: {
         width: '40%',
+    },
+    [theme.breakpoints.only('xs')]: {
+        width:'90%'
     }
 }))
 
@@ -25,6 +28,9 @@ export const ProfileButtons = styled(Button)(({ theme }) => ({
     ":active": {
         backgroundColor: grey[700],
         color: grey[100],
+    },
+    [theme.breakpoints.only('xs')]:{
+        fontSize:'10px'
     }
 }))
 

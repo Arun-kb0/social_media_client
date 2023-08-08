@@ -5,6 +5,9 @@ export const StyledBox = styled(Box)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
     height: '100vh',
+    [theme.breakpoints.only('xs')]: {
+        height: '170vh'
+    }
 }))
 
 export const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -13,6 +16,9 @@ export const StyledPaper = styled(Paper)(({ theme }) => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: theme.spacing(2),
+    [theme.breakpoints.only('xs')]: {
+        marginTop: theme.spacing(3),
+    }
 }))
 
 

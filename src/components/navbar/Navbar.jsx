@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 
-import MobileMenu from './MobileMenu';
+import MobileMoreMenu from './MobileMoreMenu';
 import { getAllNotifications, ReciveNotifications, removeAllNotifications, removeNotification } from '../../redux/features/user/userActions';
 import { mongodbRelemConnect, searchPost } from '../../redux/features/post/postActions';
-import { SET_SEARCH_OPEN } from '../../constants/actionTypes';
+import { SET_MOBILE_DRAWER_OPEN, SET_SEARCH_OPEN } from '../../constants/actionTypes';
 import {
   Search, StyledToolbar, Icons, UserBox, SearchIconWrapper,
   StyledInputBase, StyledIconButton, StyledStack, StyledPaper
@@ -17,12 +17,14 @@ import {
   Fade, Box, Button, MenuList,
 } from '../../imports/materialuiComponents';
 import {
-  SearchIcon, NotificationsIcon, MailIcon, MenuIcon,
+  SearchIcon, NotificationsIcon, MenuIcon,
   InterestsIcon, MoreIcon
 } from '../../imports/materialIcons';
 import { logout } from '../../redux/features/auth/authActions';
 import { clearChatState } from '../../redux/features/chat/chatActions';
-import socialMediaLogo from '../../../public/vite.svg'
+import socialMediaLogo from '../../assets/vite.svg'
+import buttonToggleReducer from '../../redux/features/buttonToggle/buttonToggleReducer';
+import { Drawer } from '@mui/material';
 
 
 const Navbar = () => {
@@ -47,8 +49,7 @@ const Navbar = () => {
 
 
   const handleDrawer = () => {
-    setDrawerOpen(prev => !prev)
-    localStorage.setItem("drawerOpen", drawerOpen)
+    dispatch({ type: SET_MOBILE_DRAWER_OPEN, payload: true })
   }
 
   useEffect(() => {
@@ -119,17 +120,20 @@ const Navbar = () => {
           setAutoCompleteOpen(false)
         }
         return
-
       case 'autoComp':
         setAutoCompleteOpen(true)
         setAnchorEl(e.currentTarget)
         return
-
       case 'changeVal':
         console.log(data)
         setSearchInput(data)
         return
-
+      
+      case 'mobileMoreClose':
+        setOpenMobileMenu(true)
+        setAnchorEl(e.currentTarget)
+        return
+      
 
       default:
         return;
@@ -149,7 +153,11 @@ const Navbar = () => {
       case 'autoComp':
         setAutoCompleteOpen(false)
         return
-
+      
+      case 'mobileMoreClose':
+        setOpenMobileMenu((prev) => !prev)
+        setAnchorEl(null)
+        return
       default:
         return;
     }
@@ -176,6 +184,7 @@ const Navbar = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}    >
+
       <AppBar
         //  position='static'
         sx={{ position: 'fixed', right: 0, top: 0, left: 0, backgroundColor: 'white' }}
@@ -195,7 +204,7 @@ const Navbar = () => {
             to='/'
             sx={{ padding: '0px' }}
           >
-            <Avatar src={socialMediaLogo} />
+            <Avatar src={socialMediaLogo} onClick={() => <Navigate to='/' />} />
             <Typography
               p={1}
               variant='h6'
@@ -204,7 +213,6 @@ const Navbar = () => {
             >
               Social Media
             </Typography>
-            <InterestsIcon sx={{ display: { xs: 'block', sm: 'none' }, padding: '15px', color: blueGrey[50] }} />
           </Button>
 
           <Search >
@@ -249,7 +257,8 @@ const Navbar = () => {
           </Icons>
 
           <UserBox>
-            <NavIcon icon={<MoreIcon onClick={(() => { setOpenMobileMenu(prev => !prev) })} />} />
+            {/* <NavIcon icon={<MoreIcon onClick={(() => { setOpenMobileMenu(prev => !prev) })} />} /> */}
+            <NavIcon icon={<MoreIcon onClick={(e) => handleClick('mobileMoreClose',e)} />} />
           </UserBox>
         </StyledToolbar>
 
@@ -273,6 +282,7 @@ const Navbar = () => {
           }
         </Menu>
 
+        {/* ! handle notifications position on mobile */}
         <NotificationMenu
           open={notificationMenuOpen}
           notification={notification}
@@ -281,9 +291,14 @@ const Navbar = () => {
           handleClick={handleClick}
         />
 
-        <MobileMenu
+        <MobileMoreMenu
           openMobileMenu={openMobileMenu}
           setOpenMobileMenu={setOpenMobileMenu}
+          notification={notification}
+          authData={authData}
+          anchorEl={anchorEl}
+          handleClick={handleClick}
+          handleClose={handleClose}
         />
 
       </AppBar>

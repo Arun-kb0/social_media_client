@@ -1,10 +1,4 @@
 import React, { useState, useEffect, useRef, } from 'react'
-import { StyledChatHeader, StyledChatBox, } from './styles'
-import {
-    Avatar, Box, Button, IconButton, TextField, Typography,
-    grey, deepOrange
-} from '../../imports/materialuiComponents'
-import {SendIcon, VideocamIcon, CallIcon,} from '../../imports/materialIcons';
 
 
 import Message from './Message';
@@ -12,13 +6,22 @@ import { useSelector, useDispatch } from 'react-redux'
 import { reciveMessage, sendMessage } from '../../redux/features/chat/chatActions';
 import ChatUsers from './ChatUsers';
 import { REMOVE_MSG_NOTIFICATIONS_SUCCESS } from '../../constants/actionTypes';
+import { StyledChatHeader, StyledChatBox, StyledChatUserShowBtn } from './styles'
 
+import {
+    Avatar, Box, Button, IconButton, TextField, Typography,
+    grey, deepOrange, Fab
+} from '../../imports/materialuiComponents'
+import { SendIcon, VideocamIcon, CallIcon, } from '../../imports/materialIcons';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { width } from '@mui/system';
 
 const Chat = () => {
     const chatContainerRef = useRef(null)
     const [messageInput, setMessageInput] = useState('')
-    const [chatsocket, setChatsocket] = useState(null)
-
+    const [chatUserOpen, setChatUserOpen] = useState(true)
+    const [windowWidth, setWindowWidth] = useState(0)
     const dispatch = useDispatch()
     const { messages, chatUser, chatUsers } = useSelector(state => state.chat)
     const { userId } = useSelector(state => state.auth)
@@ -55,17 +58,47 @@ const Chat = () => {
     }
 
 
+    // chatuserOpen 
+    const handleChatUsersComp = () => {
+        if (windowWidth < 600) {
+            setChatUserOpen(!chatUserOpen)
+            console.log("handleChatUsersComp")
+        }
+    }
+
+    const updateWidth = () => {
+        setWindowWidth(window.innerWidth)
+    }
+    useEffect(() => {
+        window.addEventListener('resize', updateWidth)
+        return () => window.removeEventListener('resize', updateWidth)
+    }, [])
+    useEffect(() => {
+        console.log(windowWidth)
+        if (windowWidth > 600) {
+            setChatUserOpen(true)
+        }
+    }, [windowWidth])
+
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: grey[400], height: "100vh" }}>
+            <StyledChatUserShowBtn
+                onClick={handleChatUsersComp}
+                color="primary"
+            >
+                {chatUserOpen
+                    ? <KeyboardArrowLeftIcon />
+                    : < KeyboardArrowRightIcon />
+                }
+            </StyledChatUserShowBtn>
+
             <StyledChatBox >
-
-                <Box sx={{ flex: '0.5', display: 'flex', justifyContent: 'center', padding: 1 }}>
-
+                {chatUserOpen && <Box sx={{ flex: '0.5', display: 'flex', justifyContent: 'center', padding: 1 }}>
                     <ChatUsers
                         chatUsers={chatUsers}
                         socket={socket}
                     />
-                </Box>
+                </Box>}
 
                 <Box sx={{ flex: '2' }}>
 

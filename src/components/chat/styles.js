@@ -1,4 +1,4 @@
-import { Box, InputBase, styled, green } from '../../imports/materialuiComponents'
+import { Box, InputBase, styled, green ,Fab} from '../../imports/materialuiComponents'
 
 export const StyledChatBox = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -15,6 +15,10 @@ export const StyledChatBox = styled(Box)(({ theme }) => ({
     },
     [theme.breakpoints.only('sm')]: {
         width: '90%',
+    },
+    [theme.breakpoints.only('xs')]: {
+        width: '100%',
+        height: '90%'
     },
 }))
 
@@ -49,6 +53,9 @@ export const MessageBox = styled(Box)(({ theme }) => ({
     maxWidth: '250px',
     [theme.breakpoints.up('md')]: {
         maxWidth: '350px'
+    },
+    [theme.breakpoints.up('xs')]: {
+        // maxWidth: '98%'
     }
 }))
 
@@ -59,6 +66,9 @@ export const StyledChatHeader = styled(Box)(({ theme }) => ({
     paddingRight: 5,
     height: '7%',
     backgroundColor: green[600],
+    [theme.breakpoints.only('xs')]: {
+        height:'10%'
+    }
 }))
 
 export const StyledChatUserContainer = styled(Box)(({ theme }) => ({
@@ -73,5 +83,22 @@ export const StyledChatUserContainer = styled(Box)(({ theme }) => ({
     },
     [theme.breakpoints.up("md")]: {
         width: '250px',
+    },
+    [theme.breakpoints.only('xs')]: {
+        // display:'none'
+    }
+}))
+
+
+export const StyledChatUserShowBtn = styled(Fab)(({ theme }) => ({
+    position: 'fixed',
+    top: 150,
+    left: 10,
+   
+    [theme.breakpoints.only('xs')]:{
+        display:'flex'
+    },
+    [theme.breakpoints.up('sm')]: {
+        display: 'none'
     },
 }))

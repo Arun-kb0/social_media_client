@@ -1,7 +1,7 @@
 import {
     LOCALSTORAGE_USER,
     LOGOUT_SUCCESS, LOGOUT_START, LOGOUT_FAILED,
-    AUTH_START, AUTH_SUCCESS, AUTH_FAILED
+    AUTH_START, AUTH_SUCCESS, AUTH_FAILED,
 } from '../../../constants/actionTypes'
 import * as api from '../../../api/apiIndex'
 
@@ -88,6 +88,7 @@ export const getLocalStroageUser = () => (dispatch) => {
         ? dispatch({ type: LOCALSTORAGE_USER, payload: user })
         : dispatch({ type: LOCALSTORAGE_USER, payload: null })
 }
+
 
 
 
